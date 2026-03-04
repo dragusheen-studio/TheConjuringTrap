@@ -45,6 +45,30 @@ namespace Raycaster
         double moveX = _delta.x * _speed * deltaTime;
         double moveY = _delta.y * _speed * deltaTime;
 
+        setPosition(_checkMovement(moveX, moveY, map));
+    }
+
+    void Player::strafe(double deltaTime, const Map &map)
+    {
+        double strafeAngle = _angle + (M_PI / 2.0);
+
+        double moveX = cos(strafeAngle) * 5 * _speed * deltaTime;
+        double moveY = sin(strafeAngle) * 5 * _speed * deltaTime;
+
+        setPosition(_checkMovement(moveX, moveY, map));
+    }
+
+    /* ----- PRIVATE FUNCTIONs ----- */
+    void Player::_setDelta()
+    {
+        if (_angle < 0) _angle += 2 * M_PI;
+        if (_angle > 2 * M_PI) _angle -= 2 * M_PI;
+        _delta.x = cos(_angle) * 5;
+        _delta.y = sin(_angle) * 5;
+    }
+
+    sdl::Vector<double> Player::_checkMovement(const double &moveX, const double &moveY, const Map &map)
+    {
         int offsetX = (moveX > 0) ? _size : -_size;
         int offsetY = (moveY > 0) ? _size : -_size;
 
@@ -56,15 +80,6 @@ namespace Raycaster
         sdl::Vector<double> checkY(_position.x, _position.y + moveY + offsetY);
         if (!map.isSolidCellAt(checkY)) nextPos.y += moveY;
 
-        setPosition(nextPos);
-    }
-
-    /* ----- PRIVATE FUNCTIONs ----- */
-    void Player::_setDelta()
-    {
-        if (_angle < 0) _angle += 2 * M_PI;
-        if (_angle > 2 * M_PI) _angle -= 2 * M_PI;
-        _delta.x = cos(_angle) * 5;
-        _delta.y = sin(_angle) * 5;
+        return nextPos;
     }
 }; // namespace Raycaster

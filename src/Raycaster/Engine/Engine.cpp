@@ -66,10 +66,14 @@ namespace Raycaster
         const Uint8 *state = SDL_GetKeyboardState(NULL);
         if (state[SDL_SCANCODE_ESCAPE]) _quit = true;
 
-        if (state[SDL_SCANCODE_W] || state[SDL_SCANCODE_UP]) _player.forward(deltaTime, _map);
-        if (state[SDL_SCANCODE_S] || state[SDL_SCANCODE_DOWN]) _player.forward(-deltaTime, _map);
-        if (state[SDL_SCANCODE_A] || state[SDL_SCANCODE_LEFT]) _player.rotate(deltaTime, -1);
-        if (state[SDL_SCANCODE_D] || state[SDL_SCANCODE_RIGHT]) _player.rotate(deltaTime, 1);
+        if (state[SDL_SCANCODE_W]) _player.forward(deltaTime, _map);
+        if (state[SDL_SCANCODE_S]) _player.forward(-deltaTime, _map);
+
+        if (state[SDL_SCANCODE_A]) _player.strafe(-deltaTime, _map);
+        if (state[SDL_SCANCODE_D]) _player.strafe(deltaTime, _map);
+
+        if (state[SDL_SCANCODE_LEFT]) _player.rotate(deltaTime, -1);
+        if (state[SDL_SCANCODE_RIGHT]) _player.rotate(deltaTime, 1);
     }
 
     void Engine::compute()

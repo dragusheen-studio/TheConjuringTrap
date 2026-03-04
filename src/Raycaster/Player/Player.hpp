@@ -32,6 +32,7 @@ namespace Raycaster
             void rotate(double deltaTime, double force);
             void rotateMouse(int offset);
             void forward(double deltaTime, const Map &map);
+            void strafe(double deltaTime, const Map &map);
 
         private:
             double _angle;
@@ -43,6 +44,7 @@ namespace Raycaster
             int _size = 16;
 
             void _setDelta();
+            sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);
     };
 }; // namespace Raycaster
 

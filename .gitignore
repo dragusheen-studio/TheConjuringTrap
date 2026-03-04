@@ -1,0 +1,14 @@
+/build/
+/bin/TheConjuringTrap
+TheConjuringTrap
+*.o
+*.a
+*.so
+*.dylib
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+cd "$PROJECT_ROOT"
+
+run_project() {
+    if [ ! -d "build" ]; then
+        mkdir build
+    fi
+
+	if [ -f "TheConjuringTrap" ]; then
+		rm "TheConjuringTrap"
+	fi
+
+
+    cd build
+    cmake ..
+    make -j$(nproc)
+
+    cd ..
+
+    if [ -f "./TheConjuringTrap" ]; then
+        echo "--- Lancement du jeu ---"
+        ./TheConjuringTrap
+    else
+        echo "Erreur : L'exécutable n'a pas été généré."
+        read -p "Pressez Entrée pour fermer..."
+    fi
+}
+
+gnome-terminal --tab --title="TheConjuringTrap Build" -- bash -c "$(declare -f run_project); run_project"

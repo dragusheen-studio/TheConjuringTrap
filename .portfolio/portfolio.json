@@ -1,0 +1,52 @@
+{
+	"title": "The Conjuring Trap",
+	"subtitle": "Moteur 3D et jeu d'horreur rétro développés from-scratch en C++.",
+	"description": "Un jeu d'horreur en vue à la première personne basé sur la technologie du Raycasting (façon Wolfenstein 3D). Pris au piège dans un donjon, le joueur doit échapper à un esprit redoutable traquant le son, tout en gérant sa santé mentale et en retrouvant ses artefacts de conjuration.",
+	"image": "./cover.png",
+	"tags": [
+		{
+			"name": "C++",
+			"important": true
+		},
+		{
+			"name": "SDL2",
+			"important": true
+		},
+		{
+			"name": "Raycasting",
+			"important": true
+		},
+		{
+			"name": "Game Engine",
+			"important": false
+		},
+		{
+			"name": "Mathématiques",
+			"important": false
+		}
+	],
+	"links": [],
+	"featured": true,
+	"details": {
+		"role": "Engine Architect & Game Developer",
+		"status": "En développement",
+		"client": {
+			"name": "Personal Project",
+			"url": "https://github.com/dragusheen",
+			"description": "Projet personnel"
+		},
+		"problem": "Comment créer une expérience 3D horrifique fluide en partant de zéro, sans utiliser de moteur de jeu moderne (Unity/Unreal), tout en gérant les calculs mathématiques complexes de la 3D et l'optimisation matérielle ?",
+		"solution": "Développement du moteur personnalisé en C++ moderne avec SDL2. Implémentation d'algorithmes de Raycasting avancés (DDA, Floor/Ceiling casting, Texture Mapping) et optimisation drastique des performances via des systèmes de mise en cache mémoire des textures.",
+		"features": [
+			"Moteur 3D Raycaster développé 100% from-scratch",
+			"Texture mapping avancé (Murs, Sol, Plafond) avec ombrage dynamique et Fog",
+			"Architecture logicielle modulaire (Hooks, Smart Pointers, Caching)",
+			"Système de santé mentale dynamique (Line of Sight, Slender-like)",
+			"Mini-map rotative en temps réel via Render Targets"
+		],
+		"gallery": [
+			"./exemple.png"
+		],
+		"version": "0.1.0"
+	}
+}

@@ -44,6 +44,13 @@ namespace sdl
         return _size;
     }
 
+    /* ----- SETTERs ----- */
+    void Render::setUseMouse(bool useMouse)
+    {
+        _useMouse = useMouse;
+        SDL_SetRelativeMouseMode(_useMouse ? SDL_TRUE : SDL_FALSE);
+    }
+
     /* ----- FUNCTIONs ----- */
     void Render::clear()
     {

@@ -32,6 +32,8 @@ namespace Raycaster
 
         for (int i = 0; i < _numRays; i++)
             _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), 5, rayWidth3D, rayWidth3D * i, _render.getDimension())});
+
+        _render.setUseMouse(true);
     }
 
     /* ----- FUNCTIONs ----- */
@@ -56,6 +58,9 @@ namespace Raycaster
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) _quit = true;
+            if (e.type == SDL_MOUSEMOTION) {
+                _player.rotateMouse(e.motion.xrel);
+            }
         }
 
         const Uint8 *state = SDL_GetKeyboardState(NULL);

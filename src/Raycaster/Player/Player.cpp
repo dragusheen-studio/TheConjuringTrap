@@ -31,11 +31,13 @@ namespace Raycaster
     void Player::rotate(double deltaTime, double force)
     {
         _angle += _rotationSpeed * deltaTime * force;
+        _setDelta();
+    }
 
-        if (_angle < 0) _angle += 2 * M_PI;
-        if (_angle > 2 * M_PI) _angle -= 2 * M_PI;
-        _delta.x = cos(_angle) * 5;
-        _delta.y = sin(_angle) * 5;
+    void Player::rotateMouse(int offset)
+    {
+        _angle += offset * _mouseSensitivity;
+        _setDelta();
     }
 
     void Player::forward(double deltaTime, const Map &map)
@@ -55,5 +57,14 @@ namespace Raycaster
         if (!map.isSolidCellAt(checkY)) nextPos.y += moveY;
 
         setPosition(nextPos);
+    }
+
+    /* ----- PRIVATE FUNCTIONs ----- */
+    void Player::_setDelta()
+    {
+        if (_angle < 0) _angle += 2 * M_PI;
+        if (_angle > 2 * M_PI) _angle -= 2 * M_PI;
+        _delta.x = cos(_angle) * 5;
+        _delta.y = sin(_angle) * 5;
     }
 }; // namespace Raycaster

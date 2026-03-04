@@ -20,7 +20,9 @@ namespace Raycaster
           _minimap(sdl::Vector<double>(16, 16), 128, 0.3),
           _player(sdl::Vector<double>(0, 0)),
           _fov(fov),
-          _numRays(numRays)
+          _numRays(numRays),
+          _keyboard(),
+          _gamepad(nullptr)
     {
         _player.setPosition(_map.getPlayerStart());
 
@@ -34,6 +36,22 @@ namespace Raycaster
             _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), 5, rayWidth3D, rayWidth3D * i, _render.getDimension())});
 
         _render.setUseMouse(true);
+
+        _keyboard.bindOnReleased(SDL_SCANCODE_ESCAPE, [&](double deltaTime) { _quit = true; });
+        _keyboard.bindOnPressed(SDL_SCANCODE_W, [&](double deltaTime) { _player.forward(deltaTime, _map); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_S, [&](double deltaTime) { _player.forward(-deltaTime, _map); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_A, [&](double deltaTime) { _player.strafe(-deltaTime, _map); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_D, [&](double deltaTime) { _player.strafe(deltaTime, _map); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_LEFT, [&](double deltaTime) { _player.rotate(deltaTime, -1); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_RIGHT, [&](double deltaTime) { _player.rotate(deltaTime, 1); });
+    }
+
+    Engine::~Engine()
+    {
+        if (_gamepad) {
+            SDL_GameControllerClose(_gamepad);
+            _gamepad = nullptr;
+        }
     }
 
     /* ----- FUNCTIONs ----- */
@@ -58,22 +76,44 @@ namespace Raycaster
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) _quit = true;
-            if (e.type == SDL_MOUSEMOTION) {
-                _player.rotateMouse(e.motion.xrel);
+            if (e.type == SDL_MOUSEMOTION) _player.rotateMouse(e.motion.xrel);
+
+            if (e.type == SDL_CONTROLLERDEVICEADDED) {
+                if (!_gamepad) {
+                    _gamepad = SDL_GameControllerOpen(e.cdevice.which);
+                    std::cout << "Manette connectée !" << std::endl;
+                }
+            }
+            if (e.type == SDL_CONTROLLERDEVICEREMOVED) {
+                if (_gamepad && e.cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(_gamepad))) {
+                    SDL_GameControllerClose(_gamepad);
+                    _gamepad = nullptr;
+                    std::cout << "Manette déconnectée !" << std::endl;
+                }
             }
         }
 
-        const Uint8 *state = SDL_GetKeyboardState(NULL);
-        if (state[SDL_SCANCODE_ESCAPE]) _quit = true;
+        _keyboard.update(deltaTime);
 
-        if (state[SDL_SCANCODE_W]) _player.forward(deltaTime, _map);
-        if (state[SDL_SCANCODE_S]) _player.forward(-deltaTime, _map);
+        if (_gamepad) {
+            Sint16 leftY = SDL_GameControllerGetAxis(_gamepad, SDL_CONTROLLER_AXIS_LEFTY);
+            if (std::abs(leftY) > JOYSTICK_DEAD_ZONE) {
+                double force = (double)leftY / 32767.0;
+                _player.forward(-deltaTime * force, _map);
+            }
 
-        if (state[SDL_SCANCODE_A]) _player.strafe(-deltaTime, _map);
-        if (state[SDL_SCANCODE_D]) _player.strafe(deltaTime, _map);
+            Sint16 leftX = SDL_GameControllerGetAxis(_gamepad, SDL_CONTROLLER_AXIS_LEFTX);
+            if (std::abs(leftX) > JOYSTICK_DEAD_ZONE) {
+                double force = (double)leftX / 32767.0;
+                _player.strafe(deltaTime * force, _map);
+            }
 
-        if (state[SDL_SCANCODE_LEFT]) _player.rotate(deltaTime, -1);
-        if (state[SDL_SCANCODE_RIGHT]) _player.rotate(deltaTime, 1);
+            Sint16 rightX = SDL_GameControllerGetAxis(_gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
+            if (std::abs(rightX) > JOYSTICK_DEAD_ZONE) {
+                double force = (double)rightX / 32767.0;
+                _player.rotate(deltaTime, force);
+            }
+        }
     }
 
     void Engine::compute()

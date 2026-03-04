@@ -14,6 +14,8 @@
 #include <SDL2/SDL.h>
 #include <cmath>
 #include <limits>
+#include <memory>
+#include "SDL/GameControllers/GameControllers.hpp"
 #include "SDL/Keyboard/Keyboard.hpp"
 #include "SDL/Render/Render.hpp"
 #include "Raycaster/Map/Map.hpp"
@@ -28,7 +30,7 @@ namespace Raycaster
     {
         public:
             Engine(double fov = 60.0, int numRays = 320);
-            ~Engine();
+            ~Engine() = default;
 
             void run();
 
@@ -44,9 +46,7 @@ namespace Raycaster
             Minimap _minimap;
             Player _player;
             sdl::Keyboard _keyboard;
-
-            SDL_GameController *_gamepad;
-            const int JOYSTICK_DEAD_ZONE = 8000;
+            sdl::GameControllers _gameController;
 
             struct RayData {
                     double offset;

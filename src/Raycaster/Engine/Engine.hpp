@@ -14,6 +14,9 @@
 #include <SDL2/SDL.h>
 #include <cmath>
 #include <limits>
+#include <memory>
+#include "SDL/GameControllers/GameControllers.hpp"
+#include "SDL/Keyboard/Keyboard.hpp"
 #include "SDL/Render/Render.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
@@ -42,6 +45,8 @@ namespace Raycaster
             Map _map;
             Minimap _minimap;
             Player _player;
+            sdl::Keyboard _keyboard;
+            sdl::GameControllers _gameController;
 
             struct RayData {
                     double offset;

@@ -28,6 +28,8 @@ namespace sdl
             SDL_Renderer *getRenderer();
             Vector<int> getDimension();
 
+            void setUseMouse(bool useMouse);
+
             void clear();
             void present();
 
@@ -37,6 +39,7 @@ namespace sdl
             Vector<int> _size;
             const char *_title;
             sdl::Color _clearColor;
+            bool _useMouse = false;
     };
 }; // namespace sdl
 

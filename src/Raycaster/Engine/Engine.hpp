@@ -22,6 +22,7 @@
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/Ray/Ray.hpp"
+#include "Raycaster/Sprite/Sprite.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
@@ -31,6 +32,12 @@ namespace Raycaster
         public:
             Engine(double fov = 60.0, int numRays = 320);
             ~Engine() = default;
+
+            const Map &getMap() const;
+            double getFieldOfView() const;
+            double getDepthOfView() const;
+            int getNumRays() const;
+            const sdl::Render &getRender() const;
 
             void run();
 
@@ -55,7 +62,10 @@ namespace Raycaster
 
             int _numRays;
             double _fov;
+            double _dov = 5;
             std::vector<RayData> _rays;
+            std::vector<double> _zBuffer;
+            std::unique_ptr<Sprite> _chest;
     };
 }; // namespace Raycaster
 

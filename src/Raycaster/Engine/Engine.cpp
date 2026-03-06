@@ -21,7 +21,8 @@ namespace Raycaster
           _player(sdl::Vector<double>(0, 0)),
           _fov(fov),
           _numRays(numRays),
-          _keyboard()
+          _keyboard(),
+          _chest(std::make_unique<Sprite>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2), "chest/Metal Chest - Closed.png", 0.5))
     {
         _player.setPosition(_map.getPlayerStart());
 
@@ -32,7 +33,8 @@ namespace Raycaster
         double rayWidth3D = 960.0 / _numRays;
 
         for (int i = 0; i < _numRays; i++)
-            _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), 5, rayWidth3D, rayWidth3D * i, _render.getDimension())});
+            _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), _dov, rayWidth3D, rayWidth3D * i, _render.getDimension())});
+        _zBuffer.resize(_numRays, 0.0);
 
         _render.setUseMouse(true);
 
@@ -50,6 +52,32 @@ namespace Raycaster
         });
         _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) { _player.rotate(deltaTime, values.x); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_START, [&](double deltaTime) { _quit = true; });
+    }
+
+    /* ----- GETTERS ----- */
+    const Map &Engine::getMap() const
+    {
+        return _map;
+    }
+
+    double Engine::getFieldOfView() const
+    {
+        return _fov;
+    }
+
+    double Engine::getDepthOfView() const
+    {
+        return _dov;
+    }
+
+    int Engine::getNumRays() const
+    {
+        return _numRays;
+    }
+
+    const sdl::Render &Engine::getRender() const
+    {
+        return _render;
     }
 
     /* ----- FUNCTIONs ----- */
@@ -88,11 +116,15 @@ namespace Raycaster
         double playerAngle = _player.getAngle();
         sdl::Vector<double> pPos = _player.getPosition();
 
-        for (Raycaster::Engine::RayData &data : _rays) {
-            data.ray.setAngle(playerAngle + data.offset);
-            data.ray.setPosition(pPos);
-            data.ray.compute(_map, _player);
+        for (int i = 0; i < _numRays; i++) {
+            _rays[i].ray.setAngle(playerAngle + _rays[i].offset);
+            _rays[i].ray.setPosition(pPos);
+            _rays[i].ray.compute(_map, _player);
+
+            _zBuffer[i] = _rays[i].ray.getDistance();
         }
+
+        _chest->compute(_player, _zBuffer);
     }
 
     void Engine::render()
@@ -101,6 +133,7 @@ namespace Raycaster
 
         for (Raycaster::Engine::RayData &data : _rays)
             data.ray.draw(_render);
+        _chest->draw(_render);
         _minimap.draw(_render);
 
         _render.present();

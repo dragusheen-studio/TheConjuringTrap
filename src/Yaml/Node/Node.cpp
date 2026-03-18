@@ -42,4 +42,11 @@ namespace yaml
         return std::stod(asString());
     }
 
+    bool Node::asBool() const
+    {
+        std::string val = asString();
+        std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+        return (val == "true" || val == "1" || val == "yes");
+    }
+
 }; // namespace yaml

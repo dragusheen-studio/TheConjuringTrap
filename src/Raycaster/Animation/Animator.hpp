@@ -21,13 +21,6 @@
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    struct AnimationData {
-            int row;
-            int maxFrames;
-            double speed;
-            std::string transition;
-    };
-
     class Animator
     {
         public:
@@ -42,8 +35,16 @@ namespace Raycaster
             std::string getCurrentAnimation() const;
 
         private:
+            struct _AnimationData {
+                    int row;
+                    int maxFrames;
+                    double speed;
+                    std::string transition;
+                    bool loop;
+            };
+
             std::shared_ptr<sdl::Texture> _texture;
-            std::unordered_map<std::string, AnimationData> _animations;
+            std::unordered_map<std::string, _AnimationData> _animations;
             std::string _currentAnim = "";
 
             int _columns;

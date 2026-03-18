@@ -31,60 +31,29 @@ namespace Raycaster
         _frameHeight = _texture->getHeight() / _rows;
 
         std::shared_ptr<yaml::Node> animationsNode = root->get("animations");
-        for (auto const &[animName, animNode] : animationsNode->children) {
-            AnimationData data;
-            data.row = animNode->get("row")->asInt();
-            data.maxFrames = animNode->get("frames")->asInt();
-            data.speed = animNode->get("speed")->asDouble();
 
-            if (animNode->has("transition"))
-                data.transition = animNode->get("transition")->asString();
-            else
-                data.transition = "";
+        int currentRow = 0;
+        std::string firstAnimName = "";
+
+        for (const std::string &animName : animationsNode->keys) {
+            std::shared_ptr<yaml::Node> animNode = animationsNode->get(animName);
+
+            _AnimationData data;
+            data.row = currentRow++;
+            data.maxFrames = animNode->has("frames") ? animNode->get("frames")->asInt() : _columns;
+            data.speed = animNode->has("speed") ? animNode->get("speed")->asDouble() : 0.15;
+            data.transition = animNode->has("transition") ? animNode->get("transition")->asString() : "";
+            data.loop = animNode->has("loop") ? animNode->get("loop")->asBool() : true;
 
             _animations[animName] = data;
+            if (firstAnimName.empty()) firstAnimName = animName;
         }
 
         if (!_animations.empty()) {
-            if (_animations.find("idle") != _animations.end())
-                play("idle");
-            else
-                play(_animations.begin()->first);
-        }
-    }
-
-    /* ----- FUNCTIONs ----- */
-    void Animator::play(const std::string &name)
-    {
-        if (_animations.find(name) == _animations.end() || _currentAnim == name) return;
-
-        _currentAnim = name;
-        _currentFrame = 0;
-        _timer = 0.0;
-    }
-
-    void Animator::update(double deltaTime)
-    {
-        if (_currentAnim.empty()) return;
-
-        AnimationData &anim = _animations[_currentAnim];
-
-        if (anim.speed <= 0.0) return;
-
-        _timer += deltaTime;
-
-        if (_timer >= anim.speed) {
-            _timer -= anim.speed;
-            _currentFrame++;
-
-            if (_currentFrame >= anim.maxFrames) {
-                if (!anim.transition.empty()) {
-                    std::string nextAnim = anim.transition;
-                    _currentAnim = "";
-                    play(nextAnim);
-                } else {
-                    _currentFrame = 0;
-                }
+            if (root->has("default_animation")) {
+                play(root->get("default_animation")->asString());
+            } else {
+                play(firstAnimName);
             }
         }
     }
@@ -94,7 +63,7 @@ namespace Raycaster
     {
         if (_currentAnim.empty()) return {0, 0, _frameWidth, _frameHeight};
 
-        const AnimationData &anim = _animations.at(_currentAnim);
+        const _AnimationData &anim = _animations.at(_currentAnim);
 
         int x = _currentFrame * _frameWidth;
         int y = anim.row * _frameHeight;
@@ -112,4 +81,41 @@ namespace Raycaster
         return _currentAnim;
     }
 
+    /* ----- FUNCTIONs ----- */
+    void Animator::play(const std::string &name)
+    {
+        if (_animations.find(name) == _animations.end() || _currentAnim == name) return;
+
+        _currentAnim = name;
+        _currentFrame = 0;
+        _timer = 0.0;
+    }
+
+    void Animator::update(double deltaTime)
+    {
+        if (_currentAnim.empty()) return;
+
+        _AnimationData &anim = _animations[_currentAnim];
+
+        if (anim.speed <= 0.0) return;
+
+        _timer += deltaTime;
+
+        if (_timer >= anim.speed) {
+            _timer -= anim.speed;
+            _currentFrame++;
+
+            if (_currentFrame >= anim.maxFrames) {
+                if (!anim.transition.empty()) {
+                    std::string nextAnim = anim.transition;
+                    _currentAnim = "";
+                    play(nextAnim);
+                } else if (anim.loop) {
+                    _currentFrame = 0;
+                } else {
+                    _currentFrame = anim.maxFrames - 1;
+                }
+            }
+        }
+    }
 }; // namespace Raycaster

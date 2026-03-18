@@ -2,17 +2,12 @@ texture: "chest/chest_sheet.png"
 grid:
   columns: 5
   rows: 3
+default_animation: "idle"
 animations:
   idle:
-    row: 0
-    frames: 5
-    speed: 0.15
+    loop: true
   opening:
-    row: 1
-    frames: 5
-    speed: 0.15
     transition: "open"
+    loop: false
   open:
-    row: 2
-    frames: 5
-    speed: 0.15
+    loop: true

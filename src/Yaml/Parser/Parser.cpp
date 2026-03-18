@@ -69,7 +69,9 @@ namespace yaml
 
             auto newNode = std::make_shared<Node>();
             newNode->value = val;
+
             stack.back().second->children[key] = newNode;
+            stack.back().second->keys.push_back(key);
 
             if (val.empty())
                 stack.push_back({indent, newNode});

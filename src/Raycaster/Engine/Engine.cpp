@@ -131,7 +131,8 @@ namespace Raycaster
 
     void Engine::compute()
     {
-        _minimap.compute(_map, _player);
+        _minimap.compute(_map, _player, _entities);
+
         double playerAngle = _player.getAngle();
         sdl::Vector<double> pPos = _player.getPosition();
 

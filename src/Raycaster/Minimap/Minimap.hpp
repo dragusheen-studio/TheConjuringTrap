@@ -14,6 +14,7 @@
 #include <SDL2/SDL.h>
 #include "SDL/Drawable/Drawable.hpp"
 #include "SDL/Movable/Movable.hpp"
+#include "Raycaster/Entity/Entity.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Player/Player.hpp"
 
@@ -30,7 +31,7 @@ namespace Raycaster
             void draw(sdl::Render &render) override;
             /* ----- END DRAWABLE ----- */
 
-            void compute(const Map &map, const Player &player);
+            void compute(const Map &map, const Player &player, const std::vector<std::unique_ptr<Entity>> &entities);
 
         private:
             int _size;
@@ -38,7 +39,9 @@ namespace Raycaster
             SDL_Texture *_mapTexture;
             sdl::Vector<double> _pPos;
             double _pAngle;
+
             const Map *_mapRef;
+            const std::vector<std::unique_ptr<Entity>> *_entitiesRef = nullptr;
 
             void _generateTexture(sdl::Render &render, const Map &map);
     };

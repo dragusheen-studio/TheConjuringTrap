@@ -14,13 +14,16 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
-        : Raycaster::Entity(engine, render, position, "chest/Metal Chest - Closed.png", 0.5)
+        : InteractibleEntity(engine, render, position, "chest/Metal Chest - Closed.png", 0.5)
     {
     }
 
     /* ----- FUNCTIONs ----- */
-    void Chest::compute(const Player &player, const std::vector<double> &zBuffer)
+    void Chest::interact(sdl::Render &render)
     {
-        Raycaster::Entity::compute(player, zBuffer);
+        if (_isOpen) return;
+
+        _isOpen = true;
+        _texture = sdl::TextureManager::get().get(render, "chest/Metal Chest - Open.png");
     }
 }; // namespace Raycaster

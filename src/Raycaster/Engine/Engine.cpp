@@ -45,6 +45,11 @@ namespace Raycaster
         _keyboard.bindOnPressed(SDL_SCANCODE_D, [&](double deltaTime) { _player.strafe(deltaTime, _map); });
         _keyboard.bindOnPressed(SDL_SCANCODE_LEFT, [&](double deltaTime) { _player.rotate(deltaTime, -1); });
         _keyboard.bindOnPressed(SDL_SCANCODE_RIGHT, [&](double deltaTime) { _player.rotate(deltaTime, 1); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
+            InteractibleEntity *interactObj = dynamic_cast<InteractibleEntity *>(_chest.get());
+            if (interactObj != nullptr && interactObj->canInteract())
+                interactObj->interact(_render);
+        });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -52,6 +57,11 @@ namespace Raycaster
         });
         _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) { _player.rotate(deltaTime, values.x); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_START, [&](double deltaTime) { _quit = true; });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
+            InteractibleEntity *interactObj = dynamic_cast<InteractibleEntity *>(_chest.get());
+            if (interactObj != nullptr && interactObj->canInteract())
+                interactObj->interact(_render);
+        });
     }
 
     /* ----- GETTERS ----- */

@@ -11,21 +11,21 @@
 #define RAYCASTER_CHEST_HPP_
 
 /* ----- INCLUDEs ----- */
-#include <SDL2/SDL.h>
-#include <memory>
-#include <vector>
-#include "Raycaster/Entity/Entity.hpp"
+#include "Raycaster/Entity/Interactible/InteractibleEntity.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    class Chest : public Raycaster::Entity
+    class Chest : public InteractibleEntity
     {
         public:
             Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
             ~Chest() = default;
 
-            void compute(const Player &player, const std::vector<double> &zBuffer) override;
+            void interact(sdl::Render &render) override;
+
+        private:
+            bool _isOpen = false;
     };
 }; // namespace Raycaster
 

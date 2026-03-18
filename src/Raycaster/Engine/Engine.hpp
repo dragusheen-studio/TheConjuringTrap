@@ -18,11 +18,11 @@
 #include "SDL/GameControllers/GameControllers.hpp"
 #include "SDL/Keyboard/Keyboard.hpp"
 #include "SDL/Render/Render.hpp"
+#include "Raycaster/Entity/Chest/Chest.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/Ray/Ray.hpp"
-#include "Raycaster/Sprite/Sprite.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
@@ -65,7 +65,7 @@ namespace Raycaster
             double _dov = 5;
             std::vector<RayData> _rays;
             std::vector<double> _zBuffer;
-            std::unique_ptr<Sprite> _chest;
+            std::unique_ptr<Chest> _chest;
     };
 }; // namespace Raycaster
 

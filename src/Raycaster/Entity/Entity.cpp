@@ -7,14 +7,14 @@
 */
 
 /* ----- INCLUDEs ----- */
-#include "./Sprite.hpp"
+#include "./Entity.hpp"
 #include "Raycaster/Engine/Engine.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    Sprite::Sprite(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale)
+    Entity::Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale)
         : sdl::Movable(position),
           _scale(scale),
           _renderDimension(render.getDimension()),
@@ -29,7 +29,7 @@ namespace Raycaster
     }
 
     /* ----- DRAWABLE ----- */
-    void Sprite::draw(sdl::Render &render)
+    void Entity::draw(sdl::Render &render)
     {
         if (!_visible || !_zBufferRef || !_texture) return;
 
@@ -40,7 +40,7 @@ namespace Raycaster
         int startRay = _screenX - halfWidthRays;
         int endRay = _screenX + halfWidthRays;
 
-        int wallBottomY = (_renderDimension.y / 2) + (_spriteSize / 2);
+        int wallBottomY = (_renderDimension.y / 2) + (_entitySize / 2);
         int drawStartY = wallBottomY - _size.y;
 
         double shadow = 1.0 - (_distance / (_cellSize * _dov));
@@ -65,7 +65,7 @@ namespace Raycaster
     }
 
     /* ----- FUNCTIONs ----- */
-    void Sprite::compute(const Player &player, const std::vector<double> &zBuffer)
+    void Entity::compute(const Player &player, const std::vector<double> &zBuffer)
     {
         _zBufferRef = &zBuffer;
 
@@ -73,8 +73,8 @@ namespace Raycaster
         double dy = _position.y - player.getPosition().y;
         double dist = sqrt(pow(dx, 2) + pow(dy, 2));
 
-        double angleToSprite = atan2(dy, dx);
-        double angleDiff = angleToSprite - player.getAngle();
+        double angleToEntity = atan2(dy, dx);
+        double angleDiff = angleToEntity - player.getAngle();
 
         while (angleDiff > M_PI)
             angleDiff -= 2.0 * M_PI;
@@ -94,9 +94,9 @@ namespace Raycaster
         _distance = dist * cos(angleDiff);
         if (_distance < 1.0) _distance = 1.0;
 
-        _spriteSize = (_cellSize * _renderDimension.y) / _distance;
+        _entitySize = (_cellSize * _renderDimension.y) / _distance;
 
-        _size.y = _spriteSize * _scale;
+        _size.y = _entitySize * _scale;
         _size.x = _size.y * _aspectRatio;
     }
 }; // namespace Raycaster

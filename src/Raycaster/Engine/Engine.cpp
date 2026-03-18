@@ -22,7 +22,7 @@ namespace Raycaster
           _fov(fov),
           _numRays(numRays),
           _keyboard(),
-          _chest(std::make_unique<Sprite>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2), "chest/Metal Chest - Closed.png", 0.5))
+          _chest(std::make_unique<Chest>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2)))
     {
         _player.setPosition(_map.getPlayerStart());
 

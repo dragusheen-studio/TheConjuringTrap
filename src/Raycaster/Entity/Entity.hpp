@@ -6,9 +6,9 @@
     --U-----U------------------------
 */
 
-/* ----- RAYCASTER_SPRITE_HPP_ ----- */
-#ifndef RAYCASTER_SPRITE_HPP_
-#define RAYCASTER_SPRITE_HPP_
+/* ----- RAYCASTER_ENTITY_HPP_ ----- */
+#ifndef RAYCASTER_ENTITY_HPP_
+#define RAYCASTER_ENTITY_HPP_
 
 /* ----- INCLUDEs ----- */
 #include <SDL2/SDL.h>
@@ -25,19 +25,19 @@ namespace Raycaster
 {
     class Engine;
 
-    class Sprite : public sdl::Drawable, public sdl::Movable
+    class Entity : public sdl::Drawable, public sdl::Movable
     {
         public:
-            Sprite(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale = 1.0);
-            ~Sprite() = default;
+            Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale = 1.0);
+            ~Entity() = default;
 
             /* ----- OVERRIDE DRAWABLE ----- */
             void draw(sdl::Render &render) override;
             /* ----- END DRAWABLE ----- */
 
-            void compute(const Player &player, const std::vector<double> &zBuffer);
+            virtual void compute(const Player &player, const std::vector<double> &zBuffer);
 
-        private:
+        protected:
             std::shared_ptr<sdl::Texture> _texture;
 
             double _scale;
@@ -47,7 +47,7 @@ namespace Raycaster
             bool _visible = false;
             double _distance = 0;
             int _screenX = 0;
-            int _spriteSize = 0;
+            int _entitySize = 0;
             int _numRays = 0;
             int _cellSize = 0;
             sdl::Vector<double> _size;
@@ -56,5 +56,5 @@ namespace Raycaster
     };
 }; // namespace Raycaster
 
-/* ----- RAYCASTER_SPRITE_HPP_ ----- */
+/* ----- RAYCASTER_ENTITY_HPP_ ----- */
 #endif

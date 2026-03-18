@@ -11,17 +11,19 @@
 #define RAYCASTER_CHEST_HPP_
 
 /* ----- INCLUDEs ----- */
-#include "Raycaster/Entity/Interactible/InteractibleEntity.hpp"
+#include "Raycaster/Entity/Entity.hpp"
+#include "Raycaster/Entity/Interactible/Interactible.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    class Chest : public InteractibleEntity
+    class Chest : public Entity, public Interactible
     {
         public:
             Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
             ~Chest() = default;
 
+            bool canInteract() const override;
             void interact(sdl::Render &render) override;
 
         private:

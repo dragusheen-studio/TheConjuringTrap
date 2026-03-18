@@ -18,7 +18,7 @@
 #include "SDL/Movable/Movable.hpp"
 #include "SDL/Texture/Texture.hpp"
 #include "SDL/TextureManager/TextureManager.hpp"
-#include "Raycaster/Animation/Animator.hpp"
+#include "Raycaster/Entity/Animation/Animator.hpp"
 #include "Raycaster/Player/Player.hpp"
 
 /* ----- CLASS ----- */
@@ -36,6 +36,7 @@ namespace Raycaster
             void draw(sdl::Render &render) override;
             /* ----- END DRAWABLE ----- */
 
+            bool isTargeted(double maxDistance = 1.5) const;
             virtual void compute(const Player &player, const std::vector<double> &zBuffer);
             virtual void update(double deltaTime);
 

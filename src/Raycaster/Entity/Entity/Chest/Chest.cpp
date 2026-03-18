@@ -14,11 +14,16 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
-        : InteractibleEntity(engine, render, position, "assets/config/entity/chest/chest.yaml", 0.5)
+        : Entity(engine, render, position, "assets/config/entity/chest/chest.yaml", 0.5)
     {
     }
 
     /* ----- FUNCTIONs ----- */
+    bool Chest::canInteract() const
+    {
+        return (!_isOpen && isTargeted());
+    }
+
     void Chest::interact(sdl::Render &render)
     {
         if (_isOpen) return;

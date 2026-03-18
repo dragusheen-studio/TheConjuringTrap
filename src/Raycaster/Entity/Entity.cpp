@@ -74,6 +74,16 @@ namespace Raycaster
     }
 
     /* ----- FUNCTIONs ----- */
+    bool Entity::isTargeted(double maxDistance) const
+    {
+        if (!_visible) return false;
+        if (_distance > _cellSize * maxDistance) return false;
+
+        int centerLeft = _numRays / 3;
+        int centerRight = (_numRays / 3) * 2;
+        return (_screenX >= centerLeft && _screenX <= centerRight);
+    }
+
     void Entity::compute(const Player &player, const std::vector<double> &zBuffer)
     {
         _zBufferRef = &zBuffer;

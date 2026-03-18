@@ -18,7 +18,7 @@
 #include "SDL/GameControllers/GameControllers.hpp"
 #include "SDL/Keyboard/Keyboard.hpp"
 #include "SDL/Render/Render.hpp"
-#include "Raycaster/Entity/Chest/Chest.hpp"
+#include "Raycaster/Entity/Entity/Chest/Chest.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"

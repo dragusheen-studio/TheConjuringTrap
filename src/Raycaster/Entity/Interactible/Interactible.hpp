@@ -11,19 +11,18 @@
 #define RAYCASTER_INTERACTIBLE_ENTITY_HPP_
 
 /* ----- INCLUDEs ----- */
-#include "Raycaster/Entity/Entity.hpp"
+#include "SDL/Render/Render.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    class InteractibleEntity : public Raycaster::Entity
+    class Interactible
     {
         public:
-            InteractibleEntity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string yamlPath, double scale = 1.0);
-            virtual ~InteractibleEntity() = default;
+            virtual ~Interactible() = default;
 
-            virtual bool canInteract() const;
-            virtual void interact(sdl::Render &render);
+            virtual bool canInteract() const = 0;
+            virtual void interact(sdl::Render &render) = 0;
     };
 }; // namespace Raycaster
 

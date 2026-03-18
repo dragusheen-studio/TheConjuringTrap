@@ -14,7 +14,7 @@
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    Entity::Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale)
+    Entity::Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string yamlPath, double scale)
         : sdl::Movable(position),
           _scale(scale),
           _renderDimension(render.getDimension()),
@@ -24,14 +24,18 @@ namespace Raycaster
           _numRays(engine.getNumRays()),
           _size(0, 0)
     {
-        _texture = sdl::TextureManager::get().get(render, texturePath);
-        _aspectRatio = (double)_texture->getWidth() / _texture->getHeight();
+        _animator = std::make_unique<Animator>(yamlPath, render);
+        SDL_Rect srcRect = _animator->getSrcRect();
+        _aspectRatio = (double)srcRect.w / srcRect.h;
     }
 
     /* ----- DRAWABLE ----- */
     void Entity::draw(sdl::Render &render)
     {
-        if (!_visible || !_zBufferRef || !_texture) return;
+        if (!_visible || !_zBufferRef || !_animator) return;
+
+        std::shared_ptr<sdl::Texture> texture = _animator->getTexture();
+        if (!texture) return;
 
         SDL_Renderer *renderer = render.getRenderer();
         double rayWidth3D = (double)_renderDimension.x / _numRays;
@@ -46,19 +50,24 @@ namespace Raycaster
         double shadow = 1.0 - (_distance / (_cellSize * _dov));
         if (shadow < 0.0) shadow = 0.0;
         sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
-        _texture->applyOnTexture(shadowColor);
+        texture->applyOnTexture(shadowColor);
+
+        // On récupère le rectangle de découpage de la frame actuelle !
+        SDL_Rect srcRect = _animator->getSrcRect();
 
         for (int i = startRay; i < endRay; i++) {
             if (i >= 0 && i < _numRays) {
                 if (_distance < (*_zBufferRef)[i]) {
-                    int texX = (int)((i - startRay) * _texture->getWidth() / (double)(endRay - startRay));
-                    if (texX < 0) texX = 0;
-                    if (texX >= _texture->getWidth()) texX = _texture->getWidth() - 1;
 
-                    SDL_Rect srcRect = {texX, 0, 1, _texture->getHeight()};
+                    // Calcul savant pour piocher la bonne colonne de pixel DANS la frame
+                    int texX = srcRect.x + (int)((i - startRay) * srcRect.w / (double)(endRay - startRay));
+                    if (texX < srcRect.x) texX = srcRect.x;
+                    if (texX >= srcRect.x + srcRect.w) texX = srcRect.x + srcRect.w - 1;
+
+                    SDL_Rect colSrcRect = {texX, srcRect.y, 1, srcRect.h};
                     SDL_Rect dstRect = {(int)(i * rayWidth3D), drawStartY, (int)ceil(rayWidth3D), (int)(_size.y)};
 
-                    SDL_RenderCopy(renderer, _texture->getSDLTexture(), &srcRect, &dstRect);
+                    SDL_RenderCopy(renderer, texture->getSDLTexture(), &colSrcRect, &dstRect);
                 }
             }
         }
@@ -98,5 +107,10 @@ namespace Raycaster
 
         _size.y = _entitySize * _scale;
         _size.x = _size.y * _aspectRatio;
+    }
+
+    void Entity::update(double deltaTime)
+    {
+        if (_animator) _animator->update(deltaTime);
     }
 }; // namespace Raycaster

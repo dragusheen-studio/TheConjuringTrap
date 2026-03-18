@@ -13,8 +13,8 @@
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    InteractibleEntity::InteractibleEntity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale)
-        : Entity(engine, render, position, texturePath, scale)
+    InteractibleEntity::InteractibleEntity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string yamlPath, double scale)
+        : Entity(engine, render, position, yamlPath, scale)
     {
     }
 

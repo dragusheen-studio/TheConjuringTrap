@@ -44,6 +44,7 @@ namespace Raycaster
         private:
             void handleInput(double deltaTime);
             void compute();
+            void update(double deltaTime);
             void render();
 
             bool _quit;

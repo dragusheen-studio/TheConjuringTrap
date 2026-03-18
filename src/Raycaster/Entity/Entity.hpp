@@ -18,6 +18,7 @@
 #include "SDL/Movable/Movable.hpp"
 #include "SDL/Texture/Texture.hpp"
 #include "SDL/TextureManager/TextureManager.hpp"
+#include "Raycaster/Animation/Animator.hpp"
 #include "Raycaster/Player/Player.hpp"
 
 /* ----- CLASS ----- */
@@ -28,7 +29,7 @@ namespace Raycaster
     class Entity : public sdl::Drawable, public sdl::Movable
     {
         public:
-            Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale = 1.0);
+            Entity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string yamlPath, double scale = 1.0);
             ~Entity() = default;
 
             /* ----- OVERRIDE DRAWABLE ----- */
@@ -36,9 +37,10 @@ namespace Raycaster
             /* ----- END DRAWABLE ----- */
 
             virtual void compute(const Player &player, const std::vector<double> &zBuffer);
+            virtual void update(double deltaTime);
 
         protected:
-            std::shared_ptr<sdl::Texture> _texture;
+            std::unique_ptr<Animator> _animator;
 
             double _scale;
             double _fov;

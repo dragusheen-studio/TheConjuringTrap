@@ -16,7 +16,7 @@ namespace Raycaster
     Engine::Engine(double fov, int numRays)
         : _quit(false),
           _render(sdl::Vector<int>(960, 540), "Horror Raycaster - 3D", sdl::Color::BLACK, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED)),
-          _map(64, "./assets/config/map.txt", _render),
+          _map(64, "./assets/config/map/map.txt", _render),
           _minimap(sdl::Vector<double>(16, 16), 128, 0.3),
           _player(sdl::Vector<double>(0, 0)),
           _fov(fov),
@@ -103,6 +103,7 @@ namespace Raycaster
 
             handleInput(deltaTime);
             compute();
+            update(deltaTime);
             render();
         }
     }
@@ -135,6 +136,11 @@ namespace Raycaster
         }
 
         _chest->compute(_player, _zBuffer);
+    }
+
+    void Engine::update(double deltaTime)
+    {
+        _chest->update(deltaTime);
     }
 
     void Engine::render()

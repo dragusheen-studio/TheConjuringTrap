@@ -83,7 +83,7 @@ namespace Raycaster
                     _currentAnim = "";
                     play(nextAnim);
                 } else {
-                    _currentFrame = anim.maxFrames - 1;
+                    _currentFrame = 0;
                 }
             }
         }

@@ -1,0 +1,18 @@
+texture: "chest/chest_sheet.png"
+grid:
+  columns: 5
+  rows: 3
+animations:
+  idle:
+    row: 0
+    frames: 5
+    speed: 0.15
+  opening:
+    row: 1
+    frames: 5
+    speed: 0.15
+    transition: "open"
+  open:
+    row: 2
+    frames: 5
+    speed: 0.15

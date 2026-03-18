@@ -19,7 +19,7 @@ namespace Raycaster
     class InteractibleEntity : public Raycaster::Entity
     {
         public:
-            InteractibleEntity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string texturePath, double scale = 1.0);
+            InteractibleEntity(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string yamlPath, double scale = 1.0);
             virtual ~InteractibleEntity() = default;
 
             virtual bool canInteract() const;

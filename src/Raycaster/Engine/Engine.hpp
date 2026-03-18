@@ -66,7 +66,7 @@ namespace Raycaster
             double _dov = 5;
             std::vector<RayData> _rays;
             std::vector<double> _zBuffer;
-            std::unique_ptr<Chest> _chest;
+            std::vector<std::unique_ptr<Entity>> _entities;
     };
 }; // namespace Raycaster
 

@@ -21,8 +21,7 @@ namespace Raycaster
           _player(sdl::Vector<double>(0, 0)),
           _fov(fov),
           _numRays(numRays),
-          _keyboard(),
-          _chest(std::make_unique<Chest>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2)))
+          _keyboard()
     {
         _player.setPosition(_map.getPlayerStart());
 
@@ -36,6 +35,8 @@ namespace Raycaster
             _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), _dov, rayWidth3D, rayWidth3D * i, _render.getDimension())});
         _zBuffer.resize(_numRays, 0.0);
 
+        _entities.push_back(std::make_unique<Chest>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2)));
+
         _render.setUseMouse(true);
 
         _keyboard.bindOnReleased(SDL_SCANCODE_ESCAPE, [&](double deltaTime) { _quit = true; });
@@ -46,9 +47,11 @@ namespace Raycaster
         _keyboard.bindOnPressed(SDL_SCANCODE_LEFT, [&](double deltaTime) { _player.rotate(deltaTime, -1); });
         _keyboard.bindOnPressed(SDL_SCANCODE_RIGHT, [&](double deltaTime) { _player.rotate(deltaTime, 1); });
         _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
-            Interactible *interactObj = dynamic_cast<Interactible *>(_chest.get());
-            if (interactObj != nullptr && interactObj->canInteract())
-                interactObj->interact(_render);
+            for (auto &entity : _entities) {
+                Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
+                if (interactObj != nullptr && interactObj->canInteract())
+                    interactObj->interact(_render);
+            }
         });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
@@ -58,9 +61,11 @@ namespace Raycaster
         _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) { _player.rotate(deltaTime, values.x); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_START, [&](double deltaTime) { _quit = true; });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
-            Interactible *interactObj = dynamic_cast<Interactible *>(_chest.get());
-            if (interactObj != nullptr && interactObj->canInteract())
-                interactObj->interact(_render);
+            for (auto &entity : _entities) {
+                Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
+                if (interactObj != nullptr && interactObj->canInteract())
+                    interactObj->interact(_render);
+            }
         });
     }
 
@@ -135,12 +140,14 @@ namespace Raycaster
             _zBuffer[i] = _rays[i].ray.getDistance();
         }
 
-        _chest->compute(_player, _zBuffer);
+        for (auto &entity : _entities)
+            entity->compute(_player, _zBuffer);
     }
 
     void Engine::update(double deltaTime)
     {
-        _chest->update(deltaTime);
+        for (auto &entity : _entities)
+            entity->update(deltaTime);
     }
 
     void Engine::render()
@@ -149,7 +156,8 @@ namespace Raycaster
 
         for (Raycaster::Engine::RayData &data : _rays)
             data.ray.draw(_render);
-        _chest->draw(_render);
+        for (auto &entity : _entities)
+            entity->draw(_render);
         _minimap.draw(_render);
 
         _render.present();

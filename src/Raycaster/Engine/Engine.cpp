@@ -35,7 +35,10 @@ namespace Raycaster
             _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), _dov, rayWidth3D, rayWidth3D * i, _render.getDimension())});
         _zBuffer.resize(_numRays, 0.0);
 
-        _entities.push_back(std::make_unique<Chest>(*this, _render, sdl::Vector<double>(64 * 5 + 64 / 2, 64 * 3 + 64 / 2)));
+        const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
+        for (const auto &spawn : spawns)
+            if (spawn.type == CellType::CHEST)
+                _entities.push_back(std::make_unique<Chest>(*this, _render, spawn.position));
 
         _render.setUseMouse(true);
 

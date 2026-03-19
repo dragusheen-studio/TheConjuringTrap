@@ -12,6 +12,7 @@
 
 /* ----- INCLUDEs ----- */
 #include "SDL/Render/Render.hpp"
+#include "Raycaster/Player/Player.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
@@ -21,8 +22,8 @@ namespace Raycaster
         public:
             virtual ~Interactible() = default;
 
-            virtual bool canInteract() const = 0;
-            virtual void interact(sdl::Render &render) = 0;
+            virtual bool canInteract(Player &player) const = 0;
+            virtual void interact(sdl::Render &render, Player &player) = 0;
     };
 }; // namespace Raycaster
 

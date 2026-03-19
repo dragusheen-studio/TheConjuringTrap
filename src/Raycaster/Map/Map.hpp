@@ -31,6 +31,7 @@ namespace Raycaster
         WALL,
         PLAYER,
         CHEST,
+        LOCKED_CHEST,
     };
 
     class Map

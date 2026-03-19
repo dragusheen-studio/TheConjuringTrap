@@ -27,7 +27,24 @@ namespace Raycaster
         return _angle;
     }
 
+    bool Player::hasKey() const
+    {
+        return _keys > 0;
+    }
+
     /* ----- FUNCTIONs ----- */
+    void Player::gainKey()
+    {
+        _keys++;
+        std::cout << _keys << std::endl;
+    }
+
+    void Player::useKey()
+    {
+        _keys--;
+        std::cout << _keys << std::endl;
+    }
+
     void Player::rotate(double deltaTime, double force)
     {
         _angle += _rotationSpeed * deltaTime * force;

@@ -7,8 +7,8 @@
 */
 
 /* ----- RAYCASTER_CHEST_HPP_ ----- */
-#ifndef RAYCASTER_CHEST_HPP_
-#define RAYCASTER_CHEST_HPP_
+#ifndef RAYCASTER_LOCKED_CHEST_HPP_
+#define RAYCASTER_LOCKED_CHEST_HPP_
 
 /* ----- INCLUDEs ----- */
 #include "Raycaster/Entity/Entity.hpp"
@@ -17,11 +17,11 @@
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    class Chest : public Entity, public Interactible
+    class LockedChest : public Entity, public Interactible
     {
         public:
-            Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
-            ~Chest() = default;
+            LockedChest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
+            ~LockedChest() = default;
 
             bool canInteract(Player &player) const override;
             void interact(sdl::Render &render, Player &player) override;

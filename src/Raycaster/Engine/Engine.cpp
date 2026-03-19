@@ -36,9 +36,12 @@ namespace Raycaster
         _zBuffer.resize(_numRays, 0.0);
 
         const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
-        for (const auto &spawn : spawns)
+        for (const auto &spawn : spawns) {
             if (spawn.type == CellType::CHEST)
                 _entities.push_back(std::make_unique<Chest>(*this, _render, spawn.position));
+            else if (spawn.type == CellType::LOCKED_CHEST)
+                _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
+        }
 
         _render.setUseMouse(true);
 
@@ -52,8 +55,8 @@ namespace Raycaster
         _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
             for (auto &entity : _entities) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
-                if (interactObj != nullptr && interactObj->canInteract())
-                    interactObj->interact(_render);
+                if (interactObj != nullptr && interactObj->canInteract(_player))
+                    interactObj->interact(_render, _player);
             }
         });
 
@@ -66,8 +69,8 @@ namespace Raycaster
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
             for (auto &entity : _entities) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
-                if (interactObj != nullptr && interactObj->canInteract())
-                    interactObj->interact(_render);
+                if (interactObj != nullptr && interactObj->canInteract(_player))
+                    interactObj->interact(_render, _player);
             }
         });
     }

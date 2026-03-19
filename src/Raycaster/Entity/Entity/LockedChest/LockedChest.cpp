@@ -7,29 +7,29 @@
 */
 
 /* ----- INCLUDEs ----- */
-#include "./Chest.hpp"
+#include "./LockedChest.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
-        : Entity(engine, render, position, "assets/config/entity/chest/chest.yaml", 0.5)
+    LockedChest::LockedChest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
+        : Entity(engine, render, position, "assets/config/entity/chest/locked_chest.yaml", 0.5)
     {
     }
 
     /* ----- FUNCTIONs ----- */
-    bool Chest::canInteract(Player &player) const
+    bool LockedChest::canInteract(Player &player) const
     {
-        return (!_isOpen && isTargeted());
+        return (!_isOpen && isTargeted() && player.hasKey());
     }
 
-    void Chest::interact(sdl::Render &render, Player &player)
+    void LockedChest::interact(sdl::Render &render, Player &player)
     {
         if (_isOpen) return;
 
         _isOpen = true;
         _animator->play("opening");
-        player.gainKey();
+        player.useKey();
     }
 }; // namespace Raycaster

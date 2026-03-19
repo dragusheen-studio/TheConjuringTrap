@@ -18,6 +18,8 @@
 #include "SDL/GameControllers/GameControllers.hpp"
 #include "SDL/Keyboard/Keyboard.hpp"
 #include "SDL/Render/Render.hpp"
+#include "Raycaster/Entity/Entity/Chest/Chest.hpp"
+#include "Raycaster/Entity/Entity/LockedChest/LockedChest.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
@@ -32,11 +34,18 @@ namespace Raycaster
             Engine(double fov = 60.0, int numRays = 320);
             ~Engine() = default;
 
+            const Map &getMap() const;
+            double getFieldOfView() const;
+            double getDepthOfView() const;
+            int getNumRays() const;
+            const sdl::Render &getRender() const;
+
             void run();
 
         private:
             void handleInput(double deltaTime);
             void compute();
+            void update(double deltaTime);
             void render();
 
             bool _quit;
@@ -55,7 +64,10 @@ namespace Raycaster
 
             int _numRays;
             double _fov;
+            double _dov = 5;
             std::vector<RayData> _rays;
+            std::vector<double> _zBuffer;
+            std::vector<std::unique_ptr<Entity>> _entities;
     };
 }; // namespace Raycaster
 

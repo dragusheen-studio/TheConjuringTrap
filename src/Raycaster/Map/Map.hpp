@@ -30,6 +30,8 @@ namespace Raycaster
         EMPTY,
         WALL,
         PLAYER,
+        CHEST,
+        LOCKED_CHEST,
     };
 
     class Map
@@ -53,6 +55,11 @@ namespace Raycaster
                     std::shared_ptr<sdl::Texture> _texture = nullptr;
             };
 
+            struct EntitySpawn {
+                    CellType type;
+                    sdl::Vector<double> position;
+            };
+
             Map(int cellSize, const char *fileName, sdl::Render &render);
             ~Map() = default;
 
@@ -61,6 +68,7 @@ namespace Raycaster
             sdl::Vector<double> getPlayerStart() const;
             std::shared_ptr<sdl::Texture> getFloorTexture() const;
             std::shared_ptr<sdl::Texture> getCeilingTexture() const;
+            const std::vector<EntitySpawn> &getEntitySpawns() const;
 
             std::optional<CellData> getCellAt(sdl::Vector<double> pixelCoords) const;
             bool isSolidCellAt(sdl::Vector<double> pixelCoords) const;
@@ -71,6 +79,7 @@ namespace Raycaster
             sdl::Vector<int> _size;
             sdl::Vector<double> _playerStart;
             std::vector<CellData> _map;
+            std::vector<EntitySpawn> _entitySpawns;
 
             std::shared_ptr<sdl::Texture> _floorTexture;
             std::shared_ptr<sdl::Texture> _ceilingTexture;

@@ -28,7 +28,10 @@ namespace Raycaster
             ~Player() = default;
 
             double getAngle() const;
+            bool hasKey() const;
 
+            void gainKey();
+            void useKey();
             void rotate(double deltaTime, double force);
             void rotateMouse(int offset);
             void forward(double deltaTime, const Map &map);
@@ -42,6 +45,7 @@ namespace Raycaster
             double _rotationSpeed = 2.5;
             double _mouseSensitivity = 0.003;
             int _size = 16;
+            int _keys = 0;
 
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);

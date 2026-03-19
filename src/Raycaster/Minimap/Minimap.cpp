@@ -58,6 +58,22 @@ namespace Raycaster
 
         SDL_RenderCopyEx(renderer, _mapTexture, NULL, &destRect, mapRotation, &pivot, SDL_FLIP_NONE);
 
+        if (_entitiesRef) {
+            for (const auto &entity : *_entitiesRef) {
+                double relX = entity->getX() - _pPos.x;
+                double relY = entity->getY() - _pPos.y;
+
+                double rotX = relX * cos(-_pAngle - M_PI / 2) - relY * sin(-_pAngle - M_PI / 2);
+                double rotY = relX * sin(-_pAngle - M_PI / 2) + relY * cos(-_pAngle - M_PI / 2);
+
+                int drawX = centerX + (int)(rotX * _scale);
+                int drawY = centerY + (int)(rotY * _scale);
+
+                sdl::Circle entityBlip(3, sdl::Vector<double>(drawX, drawY), sdl::Color::GREEN);
+                entityBlip.draw(render);
+            }
+        }
+
         sdl::Circle player(4, sdl::Vector<double>(centerX, centerY), sdl::Color::YELLOW);
         player.draw(render);
 
@@ -69,11 +85,12 @@ namespace Raycaster
     }
 
     /* ----- FUNCTIONs ----- */
-    void Minimap::compute(const Map &map, const Player &player)
+    void Minimap::compute(const Map &map, const Player &player, const std::vector<std::unique_ptr<Entity>> &entities)
     {
         _pPos = player.getPosition();
         _pAngle = player.getAngle();
         _mapRef = &map;
+        _entitiesRef = &entities;
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */

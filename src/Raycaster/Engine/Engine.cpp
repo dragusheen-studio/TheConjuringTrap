@@ -16,7 +16,7 @@ namespace Raycaster
     Engine::Engine(double fov, int numRays)
         : _quit(false),
           _render(sdl::Vector<int>(960, 540), "Horror Raycaster - 3D", sdl::Color::BLACK, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED)),
-          _map(64, "./assets/config/map.txt", _render),
+          _map(64, "./assets/config/map/map.txt", _render),
           _minimap(sdl::Vector<double>(16, 16), 128, 0.3),
           _player(sdl::Vector<double>(0, 0)),
           _fov(fov),
@@ -32,7 +32,16 @@ namespace Raycaster
         double rayWidth3D = 960.0 / _numRays;
 
         for (int i = 0; i < _numRays; i++)
-            _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), 5, rayWidth3D, rayWidth3D * i, _render.getDimension())});
+            _rays.push_back({-halfFov + (i * step), Ray(0, sdl::Vector<double>(0, 0), _dov, rayWidth3D, rayWidth3D * i, _render.getDimension())});
+        _zBuffer.resize(_numRays, 0.0);
+
+        const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
+        for (const auto &spawn : spawns) {
+            if (spawn.type == CellType::CHEST)
+                _entities.push_back(std::make_unique<Chest>(*this, _render, spawn.position));
+            else if (spawn.type == CellType::LOCKED_CHEST)
+                _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
+        }
 
         _render.setUseMouse(true);
 
@@ -43,6 +52,13 @@ namespace Raycaster
         _keyboard.bindOnPressed(SDL_SCANCODE_D, [&](double deltaTime) { _player.strafe(deltaTime, _map); });
         _keyboard.bindOnPressed(SDL_SCANCODE_LEFT, [&](double deltaTime) { _player.rotate(deltaTime, -1); });
         _keyboard.bindOnPressed(SDL_SCANCODE_RIGHT, [&](double deltaTime) { _player.rotate(deltaTime, 1); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
+            for (auto &entity : _entities) {
+                Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
+                if (interactObj != nullptr && interactObj->canInteract(_player))
+                    interactObj->interact(_render, _player);
+            }
+        });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -50,6 +66,39 @@ namespace Raycaster
         });
         _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) { _player.rotate(deltaTime, values.x); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_START, [&](double deltaTime) { _quit = true; });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
+            for (auto &entity : _entities) {
+                Interactible *interactObj = dynamic_cast<Interactible *>(entity.get());
+                if (interactObj != nullptr && interactObj->canInteract(_player))
+                    interactObj->interact(_render, _player);
+            }
+        });
+    }
+
+    /* ----- GETTERS ----- */
+    const Map &Engine::getMap() const
+    {
+        return _map;
+    }
+
+    double Engine::getFieldOfView() const
+    {
+        return _fov;
+    }
+
+    double Engine::getDepthOfView() const
+    {
+        return _dov;
+    }
+
+    int Engine::getNumRays() const
+    {
+        return _numRays;
+    }
+
+    const sdl::Render &Engine::getRender() const
+    {
+        return _render;
     }
 
     /* ----- FUNCTIONs ----- */
@@ -65,6 +114,7 @@ namespace Raycaster
 
             handleInput(deltaTime);
             compute();
+            update(deltaTime);
             render();
         }
     }
@@ -84,15 +134,27 @@ namespace Raycaster
 
     void Engine::compute()
     {
-        _minimap.compute(_map, _player);
+        _minimap.compute(_map, _player, _entities);
+
         double playerAngle = _player.getAngle();
         sdl::Vector<double> pPos = _player.getPosition();
 
-        for (Raycaster::Engine::RayData &data : _rays) {
-            data.ray.setAngle(playerAngle + data.offset);
-            data.ray.setPosition(pPos);
-            data.ray.compute(_map, _player);
+        for (int i = 0; i < _numRays; i++) {
+            _rays[i].ray.setAngle(playerAngle + _rays[i].offset);
+            _rays[i].ray.setPosition(pPos);
+            _rays[i].ray.compute(_map, _player);
+
+            _zBuffer[i] = _rays[i].ray.getDistance();
         }
+
+        for (auto &entity : _entities)
+            entity->compute(_player, _zBuffer);
+    }
+
+    void Engine::update(double deltaTime)
+    {
+        for (auto &entity : _entities)
+            entity->update(deltaTime);
     }
 
     void Engine::render()
@@ -101,6 +163,8 @@ namespace Raycaster
 
         for (Raycaster::Engine::RayData &data : _rays)
             data.ray.draw(_render);
+        for (auto &entity : _entities)
+            entity->draw(_render);
         _minimap.draw(_render);
 
         _render.present();

@@ -39,6 +39,8 @@ namespace Raycaster
             void onTransformChanged() override;
             /* ----- END MOVABLE ----- */
 
+            double getDistance() const;
+
             void setAngle(double angle);
             void setDepthOfField(int depthOfField);
 

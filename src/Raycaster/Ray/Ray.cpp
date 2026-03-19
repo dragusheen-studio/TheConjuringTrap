@@ -39,6 +39,12 @@ namespace Raycaster
         _changed = true;
     }
 
+    /* ----- GETTERs ----- */
+    double Ray::getDistance() const
+    {
+        return _hit.distance;
+    }
+
     /* ----- SETTERs ----- */
     void Ray::setAngle(double angle)
     {

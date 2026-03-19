@@ -19,9 +19,11 @@ namespace Raycaster
         _cellDatas.clear();
         _map.clear();
 
-        _cellDatas[' '] = CellData(EMPTY, false, render);
-        _cellDatas['X'] = CellData(WALL, true, render, "wall.png");
-        _cellDatas['P'] = CellData(PLAYER, false, render);
+        _cellDatas[' '] = CellData(CellType::EMPTY, false, render);
+        _cellDatas['X'] = CellData(CellType::WALL, true, render, "wall.png");
+        _cellDatas['P'] = CellData(CellType::PLAYER, false, render);
+        _cellDatas['C'] = CellData(CellType::CHEST, false, render);
+        _cellDatas['L'] = CellData(CellType::LOCKED_CHEST, false, render);
 
         _floorTexture = sdl::TextureManager::get().get(render, "floor.png");
         _ceilingTexture = sdl::TextureManager::get().get(render, "ceiling.png");
@@ -55,6 +57,11 @@ namespace Raycaster
         return _ceilingTexture;
     }
 
+    const std::vector<Map::EntitySpawn> &Map::getEntitySpawns() const
+    {
+        return _entitySpawns;
+    }
+
     /* ----- FUNCTIONs ----- */
     std::optional<Map::CellData> Map::getCellAt(sdl::Vector<double> pixelCoords) const
     {
@@ -82,6 +89,9 @@ namespace Raycaster
         int x = 0;
         int maxX = 0;
         int y = 0;
+
+        _entitySpawns.clear();
+
         while ((c = fgetc(file)) != EOF) {
             if (c == '\n') {
                 y++;
@@ -91,7 +101,12 @@ namespace Raycaster
                 if (c == 'P') {
                     _playerStart = sdl::Vector<double>(x * _cellSize + _cellSize / 2, y * _cellSize + _cellSize / 2);
                     c = ' ';
+                } else if (c != 'X' && c != ' ') {
+                    sdl::Vector<double> spawnPos(x * _cellSize + _cellSize / 2.0, y * _cellSize + _cellSize / 2.0);
+                    _entitySpawns.push_back({c == 'C' ? CellType::CHEST : CellType::LOCKED_CHEST, spawnPos});
+                    c = ' ';
                 }
+
                 _map.push_back(_cellDatas[c]);
                 x++;
             }

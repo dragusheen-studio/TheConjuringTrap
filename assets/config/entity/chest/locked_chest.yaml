@@ -1,0 +1,13 @@
+texture: "chest/locked_chest_sheet.png"
+grid:
+  columns: 5
+  rows: 3
+default_animation: "idle"
+animations:
+  idle:
+    loop: true
+  opening:
+    transition: "open"
+    loop: false
+  open:
+    loop: true

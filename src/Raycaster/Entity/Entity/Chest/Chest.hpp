@@ -23,8 +23,10 @@ namespace Raycaster
             Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
             ~Chest() = default;
 
+            /* ----- OVERRIDE INTERACTIBLE ----- */
             bool canInteract(Player &player) const override;
             void interact(sdl::Render &render, Player &player) override;
+            /* ----- END INTERACTIBLE ----- */
 
         private:
             bool _isOpen = false;

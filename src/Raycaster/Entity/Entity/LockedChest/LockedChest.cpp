@@ -18,7 +18,7 @@ namespace Raycaster
     {
     }
 
-    /* ----- FUNCTIONs ----- */
+    /* ----- INTERACTIBLE ----- */
     bool LockedChest::canInteract(Player &player) const
     {
         return (!_isOpen && isTargeted() && player.hasKey());

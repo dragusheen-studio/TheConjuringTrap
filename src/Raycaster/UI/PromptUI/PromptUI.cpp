@@ -38,7 +38,21 @@ namespace Raycaster
 
         if (!target) return;
 
-        _position.x = target->getScreenX() - _size.x / 2;
-        _position.y = target->getScreenY() - _size.y / 2;
+        double distance = target->getDistance();
+        double maxDist = 96.0;
+        double minDist = 32.0;
+
+        double t = (maxDist - distance) / (maxDist - minDist);
+        if (t < 0.0) t = 0.0;
+        if (t > 1.0) t = 1.0;
+
+        double minSize = 32.0;
+        double maxSize = 72.0;
+
+        _size.x = (int)(minSize + (maxSize - minSize) * t);
+        _size.y = _size.x;
+
+        _position.x = target->getScreenX() - (_size.x / 2);
+        _position.y = target->getScreenY() - _size.y - 15;
     }
 }; // namespace Raycaster

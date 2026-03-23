@@ -56,6 +56,7 @@ namespace Raycaster
             bool _visible = false;
             bool _selected = false;
             double _distance = 0;
+            double _pitch = 0.0;
             int _screenX = 0;
             int _entitySize = 0;
             int _numRays = 0;

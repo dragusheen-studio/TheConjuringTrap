@@ -44,7 +44,8 @@ namespace Raycaster
         int startRay = _screenX - halfWidthRays;
         int endRay = _screenX + halfWidthRays;
 
-        int wallBottomY = (_renderDimension.y / 2) + (_entitySize / 2);
+        int horizon = (_renderDimension.y / 2) + _pitch;
+        int wallBottomY = horizon + (_entitySize / 2);
         int drawStartY = wallBottomY - _size.y;
 
         SDL_Rect srcRect = _animator->getSrcRect();
@@ -116,7 +117,8 @@ namespace Raycaster
 
     int Entity::getScreenY() const
     {
-        int wallBottomY = (_renderDimension.y / 2) + (_entitySize / 2);
+        int horizon = (_renderDimension.y / 2) + _pitch;
+        int wallBottomY = horizon + (_entitySize / 2);
         int drawStartY = wallBottomY - _size.y;
         return drawStartY;
     }
@@ -148,6 +150,7 @@ namespace Raycaster
 
         double angleToEntity = atan2(dy, dx);
         double angleDiff = angleToEntity - player.getAngle();
+        _pitch = player.getPitch();
 
         while (angleDiff > M_PI)
             angleDiff -= 2.0 * M_PI;

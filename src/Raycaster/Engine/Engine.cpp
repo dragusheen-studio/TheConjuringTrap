@@ -64,7 +64,10 @@ namespace Raycaster
             _player.forward(-deltaTime * values.y, _map);
             _player.strafe(deltaTime * values.x, _map);
         });
-        _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) { _player.rotate(deltaTime, values.x); });
+        _gameController.bindAnyControllerRightJoystick([&](double deltaTime, sdl::Vector<double> values) {
+            _player.rotate(deltaTime, values.x);
+            _player.pitchMouse(values.y * 15.0);
+        });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_START, [&](double deltaTime) { _quit = true; });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
             if (_currentTarget) {
@@ -123,7 +126,10 @@ namespace Raycaster
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) _quit = true;
-            if (e.type == SDL_MOUSEMOTION) _player.rotateMouse(e.motion.xrel);
+            if (e.type == SDL_MOUSEMOTION) {
+                _player.rotateMouse(e.motion.xrel);
+                _player.pitchMouse(e.motion.yrel);
+            }
             _gameController.handleEvent(e);
         }
 
@@ -141,6 +147,7 @@ namespace Raycaster
         for (int i = 0; i < _numRays; i++) {
             _rays[i].ray.setAngle(playerAngle + _rays[i].offset);
             _rays[i].ray.setPosition(pPos);
+            _rays[i].ray.setPitch(_player.getPitch());
             _rays[i].ray.compute(_map, _player);
 
             _zBuffer[i] = _rays[i].ray.getDistance();

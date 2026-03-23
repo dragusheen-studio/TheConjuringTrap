@@ -28,17 +28,20 @@ namespace Raycaster
             ~Player() = default;
 
             double getAngle() const;
+            double getPitch() const;
             bool hasKey() const;
 
             void gainKey();
             void useKey();
             void rotate(double deltaTime, double force);
             void rotateMouse(int offset);
+            void pitchMouse(int offset);
             void forward(double deltaTime, const Map &map);
             void strafe(double deltaTime, const Map &map);
 
         private:
             double _angle;
+            double _pitch = 0.0;
             sdl::Vector<double> _delta;
 
             double _speed = 35;

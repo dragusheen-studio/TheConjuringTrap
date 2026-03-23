@@ -1,4 +1,4 @@
-texture: "chest/chest_sheet.png"
+texture: "entity/chest/chest_sheet.png"
 grid:
   columns: 5
   rows: 3

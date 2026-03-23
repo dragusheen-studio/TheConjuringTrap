@@ -62,6 +62,11 @@ namespace Raycaster
         _setDelta();
     }
 
+    void Player::pitch(double deltaTime, double force)
+    {
+        _pitch += _rotationSpeed * deltaTime * force;
+    }
+
     void Player::pitchMouse(int offset)
     {
         _pitch -= offset * 2.0;

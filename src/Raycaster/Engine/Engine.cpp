@@ -53,6 +53,8 @@ namespace Raycaster
         _keyboard.bindOnPressed(SDL_SCANCODE_D, [&](double deltaTime) { _player.strafe(deltaTime, _map); });
         _keyboard.bindOnPressed(SDL_SCANCODE_LEFT, [&](double deltaTime) { _player.rotate(deltaTime, -1); });
         _keyboard.bindOnPressed(SDL_SCANCODE_RIGHT, [&](double deltaTime) { _player.rotate(deltaTime, 1); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_UP, [&](double deltaTime) { _player.pitch(deltaTime, 400); });
+        _keyboard.bindOnPressed(SDL_SCANCODE_DOWN, [&](double deltaTime) { _player.pitch(deltaTime, -400); });
         _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
             if (_currentTarget) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(_currentTarget);

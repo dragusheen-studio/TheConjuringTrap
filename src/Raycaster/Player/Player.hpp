@@ -35,6 +35,7 @@ namespace Raycaster
             void useKey();
             void rotate(double deltaTime, double force);
             void rotateMouse(int offset);
+            void pitch(double deltaTime, double force);
             void pitchMouse(int offset);
             void forward(double deltaTime, const Map &map);
             void strafe(double deltaTime, const Map &map);

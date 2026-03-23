@@ -21,7 +21,7 @@ namespace sdl
     class Movable
     {
         public:
-            Movable(Vector<double> position);
+            Movable(Vector<double> position = Vector<double>(0, 0, 0));
             virtual ~Movable() = default;
 
             Vector<double> getPosition() const;

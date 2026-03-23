@@ -47,19 +47,48 @@ namespace Raycaster
         int wallBottomY = (_renderDimension.y / 2) + (_entitySize / 2);
         int drawStartY = wallBottomY - _size.y;
 
+        SDL_Rect srcRect = _animator->getSrcRect();
+
+        if (_selected) {
+            sdl::Color glowColor(255, 200, 0, 255);
+            texture->applyOnTexture(glowColor);
+
+            SDL_SetTextureBlendMode(texture->getSDLTexture(), SDL_BLENDMODE_ADD);
+
+            double timeSec = SDL_GetTicks() / 1000.0;
+            double pulse = (sin(timeSec * 5.0) + 1.0) / 2.0;
+            int padding = 2 + (int)((_size.y * 0.05) * pulse);
+
+            for (int i = startRay; i < endRay; i++) {
+                if (i >= 0 && i < _numRays) {
+                    if (_distance < (*_zBufferRef)[i]) {
+                        int texX = srcRect.x + (int)((i - startRay) * srcRect.w / (double)(endRay - startRay));
+                        if (texX < srcRect.x) texX = srcRect.x;
+                        if (texX >= srcRect.x + srcRect.w) texX = srcRect.x + srcRect.w - 1;
+
+                        SDL_Rect colSrcRect = {texX, srcRect.y, 1, srcRect.h};
+
+                        SDL_Rect dstRect = {
+                            (int)(i * rayWidth3D) - padding,
+                            drawStartY - padding,
+                            (int)ceil(rayWidth3D) + (padding * 2),
+                            (int)(_size.y) + (padding * 2)};
+
+                        SDL_RenderCopy(renderer, texture->getSDLTexture(), &colSrcRect, &dstRect);
+                    }
+                }
+            }
+            SDL_SetTextureBlendMode(texture->getSDLTexture(), SDL_BLENDMODE_BLEND);
+        }
+
         double shadow = 1.0 - (_distance / (_cellSize * _dov));
         if (shadow < 0.0) shadow = 0.0;
         sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
         texture->applyOnTexture(shadowColor);
 
-        // On récupère le rectangle de découpage de la frame actuelle !
-        SDL_Rect srcRect = _animator->getSrcRect();
-
         for (int i = startRay; i < endRay; i++) {
             if (i >= 0 && i < _numRays) {
                 if (_distance < (*_zBufferRef)[i]) {
-
-                    // Calcul savant pour piocher la bonne colonne de pixel DANS la frame
                     int texX = srcRect.x + (int)((i - startRay) * srcRect.w / (double)(endRay - startRay));
                     if (texX < srcRect.x) texX = srcRect.x;
                     if (texX >= srcRect.x + srcRect.w) texX = srcRect.x + srcRect.w - 1;
@@ -77,6 +106,25 @@ namespace Raycaster
     double Entity::getDistance() const
     {
         return _distance;
+    }
+
+    int Entity::getScreenX() const
+    {
+        double rayWidth3D = (double)_renderDimension.x / _numRays;
+        return (int)(_screenX * rayWidth3D) - (_size.x / 6);
+    }
+
+    int Entity::getScreenY() const
+    {
+        int wallBottomY = (_renderDimension.y / 2) + (_entitySize / 2);
+        int drawStartY = wallBottomY - _size.y;
+        return drawStartY;
+    }
+
+    /* ----- SETTERS ----- */
+    void Entity::setSelected(bool selected)
+    {
+        _selected = selected;
     }
 
     /* ----- FUNCTIONs ----- */
@@ -128,5 +176,6 @@ namespace Raycaster
     void Entity::update(double deltaTime)
     {
         if (_animator) _animator->update(deltaTime);
+        _selected = false;
     }
 }; // namespace Raycaster

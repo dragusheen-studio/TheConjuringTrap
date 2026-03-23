@@ -1,0 +1,9 @@
+texture: "entity/keys/e/e_sheet.png"
+grid:
+  columns: 2
+  rows: 1
+default_animation: "idle"
+animations:
+  idle:
+    loop: true
+    speed: 0.5

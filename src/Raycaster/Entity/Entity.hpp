@@ -37,6 +37,10 @@ namespace Raycaster
             /* ----- END DRAWABLE ----- */
 
             double getDistance() const;
+            int getScreenX() const;
+            int getScreenY() const;
+
+            void setSelected(bool selected);
 
             bool isTargeted(double maxDistance = 1.5) const;
             virtual void compute(const Player &player, const std::vector<double> &zBuffer);
@@ -50,6 +54,7 @@ namespace Raycaster
             double _dov;
             double _aspectRatio;
             bool _visible = false;
+            bool _selected = false;
             double _distance = 0;
             int _screenX = 0;
             int _entitySize = 0;

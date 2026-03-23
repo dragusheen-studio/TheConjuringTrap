@@ -155,6 +155,10 @@ namespace Raycaster
     {
         for (auto &entity : _entities)
             entity->update(deltaTime);
+
+        std::sort(_entities.begin(), _entities.end(), [](const std::unique_ptr<Entity> &a, const std::unique_ptr<Entity> &b) {
+            return a->getDistance() > b->getDistance();
+        });
     }
 
     void Engine::render()

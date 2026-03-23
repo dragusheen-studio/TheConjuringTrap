@@ -73,6 +73,12 @@ namespace Raycaster
         }
     }
 
+    /* ----- GETTERS ----- */
+    double Entity::getDistance() const
+    {
+        return _distance;
+    }
+
     /* ----- FUNCTIONs ----- */
     bool Entity::isTargeted(double maxDistance) const
     {

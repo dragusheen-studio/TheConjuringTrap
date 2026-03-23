@@ -12,6 +12,7 @@
 
 /* ----- INCLUDEs ----- */
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <memory>

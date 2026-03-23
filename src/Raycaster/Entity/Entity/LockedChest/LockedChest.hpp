@@ -6,7 +6,7 @@
     --U-----U------------------------
 */
 
-/* ----- RAYCASTER_CHEST_HPP_ ----- */
+/* ----- RAYCASTER_LOCKED_CHEST_HPP_ ----- */
 #ifndef RAYCASTER_LOCKED_CHEST_HPP_
 #define RAYCASTER_LOCKED_CHEST_HPP_
 
@@ -31,5 +31,5 @@ namespace Raycaster
     };
 }; // namespace Raycaster
 
-/* ----- RAYCASTER_CHEST_HPP_ ----- */
+/* ----- RAYCASTER_LOCKED_CHEST_HPP_ ----- */
 #endif

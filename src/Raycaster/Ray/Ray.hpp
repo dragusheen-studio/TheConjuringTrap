@@ -42,6 +42,7 @@ namespace Raycaster
             double getDistance() const;
 
             void setAngle(double angle);
+            void setPitch(double pitch);
             void setDepthOfField(int depthOfField);
 
             void compute(const Map &map, const Player &player);
@@ -55,6 +56,7 @@ namespace Raycaster
             };
 
             double _angle;
+            double _pitch;
             int _depthOfField;
             Hit _hit;
             bool _changed = true;

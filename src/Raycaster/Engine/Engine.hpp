@@ -12,6 +12,7 @@
 
 /* ----- INCLUDEs ----- */
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <memory>
@@ -24,6 +25,7 @@
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/Ray/Ray.hpp"
+#include "Raycaster/UI/PromptUI/PromptUI.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
@@ -68,6 +70,8 @@ namespace Raycaster
             std::vector<RayData> _rays;
             std::vector<double> _zBuffer;
             std::vector<std::unique_ptr<Entity>> _entities;
+            std::unique_ptr<PromptUI> _promptUI;
+            Entity *_currentTarget = nullptr;
     };
 }; // namespace Raycaster
 

@@ -1,4 +1,4 @@
-texture: "chest/locked_chest_sheet.png"
+texture: "entity/chest/locked_chest_sheet.png"
 grid:
   columns: 5
   rows: 3

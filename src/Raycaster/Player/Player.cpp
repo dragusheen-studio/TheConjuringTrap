@@ -27,6 +27,11 @@ namespace Raycaster
         return _angle;
     }
 
+    double Player::getPitch() const
+    {
+        return _pitch;
+    }
+
     bool Player::hasKey() const
     {
         return _keys > 0;
@@ -55,6 +60,20 @@ namespace Raycaster
     {
         _angle += offset * _mouseSensitivity;
         _setDelta();
+    }
+
+    void Player::pitch(double deltaTime, double force)
+    {
+        _pitch += _rotationSpeed * deltaTime * force;
+    }
+
+    void Player::pitchMouse(int offset)
+    {
+        _pitch -= offset * 2.0;
+
+        double limit = 200.0;
+        if (_pitch > limit) _pitch = limit;
+        if (_pitch < -limit) _pitch = -limit;
     }
 
     void Player::forward(double deltaTime, const Map &map)

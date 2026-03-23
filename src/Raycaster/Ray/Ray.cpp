@@ -53,6 +53,13 @@ namespace Raycaster
         _changed = true;
     }
 
+    void Ray::setPitch(double pitch)
+    {
+        if (pitch == _pitch) return;
+        _pitch = pitch;
+        _changed = true;
+    }
+
     void Ray::setDepthOfField(int depthOfField)
     {
         if (depthOfField == _depthOfField) return;
@@ -66,6 +73,7 @@ namespace Raycaster
         if (!_changed) return;
         _changed = false;
 
+        _pitch = player.getPitch();
         if (_angle < 0) _angle += 2 * M_PI;
         if (_angle > 2 * M_PI) _angle -= 2 * M_PI;
 
@@ -148,7 +156,8 @@ namespace Raycaster
 
     void Ray::_drawWall(sdl::Render &render, double maxVisibility)
     {
-        SDL_Rect dstRect = {int(_lineX3D), int(_renderDimension.y / 2 - _size.y / 2), int(_size.x), int(_size.y)};
+        int horizon = (_renderDimension.y / 2) + _pitch;
+        SDL_Rect dstRect = {int(_lineX3D), int(horizon - _size.y / 2), int(_size.x), int(_size.y)};
 
         if (_hit.distance < maxVisibility && _hit.texture) {
             SDL_Rect srcRect = {_texX, 0, 1, _hit.texture->getHeight()};
@@ -171,26 +180,28 @@ namespace Raycaster
     {
         if (!_floorTexture || !_ceilingTexture) return;
 
-        int drawEnd = (_renderDimension.y / 2) + (_size.y / 2);
-        if (drawEnd < 0) drawEnd = 0;
+        int horizon = (_renderDimension.y / 2) + _pitch;
+
+        int drawStart = horizon - (_size.y / 2);
+        int drawEnd = horizon + (_size.y / 2);
+
+        if (drawStart < 0) drawStart = 0;
         if (drawEnd > _renderDimension.y) drawEnd = _renderDimension.y;
 
-        int minY = (_renderDimension.y / 2) + (_cellSize * (double)(_renderDimension.y / 2)) / (maxVisibility * cos(_fisheye));
+        double p_max = (_cellSize * (double)(_renderDimension.y / 2)) / (maxVisibility * cos(_fisheye));
+        int fogDistY = (int)p_max;
 
-        if (minY < drawEnd) minY = drawEnd;
+        for (int y = drawEnd; y < _renderDimension.y; y++) {
+            double p = y - horizon;
+            if (p <= 0) continue;
 
-        if (minY > drawEnd) {
-            _fogColor.apply(render);
+            if (p < fogDistY) {
+                _fogColor.apply(render);
+                SDL_Rect r = {int(_lineX3D), y, int(_size.x), 1};
+                SDL_RenderFillRect(render.getRenderer(), &r);
+                continue;
+            }
 
-            SDL_Rect fogFloor = {int(_lineX3D), drawEnd, int(_size.x), minY - drawEnd};
-            SDL_RenderFillRect(render.getRenderer(), &fogFloor);
-
-            SDL_Rect fogCeil = {int(_lineX3D), _renderDimension.y - minY, int(_size.x), minY - drawEnd};
-            SDL_RenderFillRect(render.getRenderer(), &fogCeil);
-        }
-
-        for (int y = minY; y < _renderDimension.y; y++) {
-            double p = y - (double)(_renderDimension.y / 2);
             double straightDist = (_cellSize * (double)(_renderDimension.y / 2)) / p;
             double realDist = straightDist / cos(_fisheye);
 
@@ -205,20 +216,53 @@ namespace Raycaster
             double shadow = 1.0 - (realDist / maxVisibility);
             if (shadow < 0.0) shadow = 0.0;
 
-            std::pair<std::shared_ptr<sdl::Texture>, int> a = std::make_pair(_floorTexture, y);
-            std::pair<std::shared_ptr<sdl::Texture>, int> b = std::make_pair(_ceilingTexture, _renderDimension.y - y - 1);
-            for (auto it : {&a, &b}) {
-                int texX = (int)(fractionX * it->first->getWidth());
-                int texY = (int)(fractionY * it->first->getHeight());
-                if (texX >= it->first->getWidth()) texX = it->first->getWidth() - 1;
-                if (texY >= it->first->getHeight()) texY = it->first->getHeight() - 1;
+            int texX = (int)(fractionX * _floorTexture->getWidth());
+            int texY = (int)(fractionY * _floorTexture->getHeight());
+            if (texX >= _floorTexture->getWidth()) texX = _floorTexture->getWidth() - 1;
+            if (texY >= _floorTexture->getHeight()) texY = _floorTexture->getHeight() - 1;
 
-                sdl::Color ceilColor = it->first->getPixel(texX, texY) * shadow;
-                ceilColor.apply(render);
+            sdl::Color col = _floorTexture->getPixel(texX, texY) * shadow;
+            col.apply(render);
 
-                SDL_Rect ceilRect = {int(_lineX3D), it->second, int(_size.x), 1};
-                SDL_RenderFillRect(render.getRenderer(), &ceilRect);
+            SDL_Rect r = {int(_lineX3D), y, int(_size.x), 1};
+            SDL_RenderFillRect(render.getRenderer(), &r);
+        }
+
+        for (int y = 0; y < drawStart; y++) {
+            double p = horizon - y;
+            if (p <= 0) continue;
+
+            if (p < fogDistY) {
+                _fogColor.apply(render);
+                SDL_Rect r = {int(_lineX3D), y, int(_size.x), 1};
+                SDL_RenderFillRect(render.getRenderer(), &r);
+                continue;
             }
+
+            double straightDist = (_cellSize * (double)(_renderDimension.y / 2)) / p;
+            double realDist = straightDist / cos(_fisheye);
+
+            double ceilX = _position.x + cos(_angle) * realDist;
+            double ceilY = _position.y + sin(_angle) * realDist;
+
+            double fractionX = fmod(ceilX, _cellSize) / _cellSize;
+            double fractionY = fmod(ceilY, _cellSize) / _cellSize;
+            if (fractionX < 0) fractionX += 1.0;
+            if (fractionY < 0) fractionY += 1.0;
+
+            double shadow = 1.0 - (realDist / maxVisibility);
+            if (shadow < 0.0) shadow = 0.0;
+
+            int texX = (int)(fractionX * _ceilingTexture->getWidth());
+            int texY = (int)(fractionY * _ceilingTexture->getHeight());
+            if (texX >= _ceilingTexture->getWidth()) texX = _ceilingTexture->getWidth() - 1;
+            if (texY >= _ceilingTexture->getHeight()) texY = _ceilingTexture->getHeight() - 1;
+
+            sdl::Color col = _ceilingTexture->getPixel(texX, texY) * shadow;
+            col.apply(render);
+
+            SDL_Rect r = {int(_lineX3D), y, int(_size.x), 1};
+            SDL_RenderFillRect(render.getRenderer(), &r);
         }
     }
 }; // namespace Raycaster

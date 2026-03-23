@@ -1,7 +1,7 @@
 {
 	"title": "The Conjuring Trap",
-	"subtitle": "Moteur 3D et jeu d'horreur rétro développés from-scratch en C++.",
-	"description": "Un jeu d'horreur en vue à la première personne basé sur la technologie du Raycasting (façon Wolfenstein 3D). Pris au piège dans un donjon, le joueur doit échapper à un esprit redoutable traquant le son, tout en gérant sa santé mentale et en retrouvant ses artefacts de conjuration.",
+	"subtitle": "Moteur 3D Retro & Jeu d'Horreur développés 'From Scratch' en C++/SDL2.",
+	"description": "Un hommage technique aux classiques du FPS (façon Wolfenstein 3D) utilisant la technologie du Raycasting. Pris au piège dans un donjon, le joueur doit échapper à un esprit redoutable traquant le son, tout en gérant sa santé mentale et en retrouvant ses artefacts de conjuration.",
 	"image": "./cover.png",
 	"tags": [
 		{
@@ -17,11 +17,11 @@
 			"important": true
 		},
 		{
-			"name": "Game Engine",
+			"name": "Mathématiques 3D",
 			"important": false
 		},
 		{
-			"name": "Mathématiques",
+			"name": "Architecture Moteur",
 			"important": false
 		}
 	],
@@ -31,22 +31,26 @@
 		"role": "Engine Architect & Game Developer",
 		"status": "En développement",
 		"client": {
-			"name": "Personal Project",
+			"name": "Projet Personnel",
 			"url": "https://github.com/dragusheen",
-			"description": "Projet personnel"
+			"description": "Exploration des fondamentaux du rendu 3D temps réel."
 		},
-		"problem": "Comment créer une expérience 3D horrifique fluide en partant de zéro, sans utiliser de moteur de jeu moderne (Unity/Unreal), tout en gérant les calculs mathématiques complexes de la 3D et l'optimisation matérielle ?",
-		"solution": "Développement du moteur personnalisé en C++ moderne avec SDL2. Implémentation d'algorithmes de Raycasting avancés (DDA, Floor/Ceiling casting, Texture Mapping) et optimisation drastique des performances via des systèmes de mise en cache mémoire des textures.",
+		"problem": "Comment créer une expérience 3D immersive et performante en partant d'une simple fenêtre 2D (SDL_Renderer), sans utiliser de bibliothèques graphiques modernes comme OpenGL ou Vulkan, tout en gérant les mathématiques du rendu, les collisions et l'optimisation mémoire ?",
+		"solution": "Développement complet d'un moteur de Raycasting en C++ moderne. Implémentation d'algorithmes de projection avancés (DDA, Texture Mapping avec perspective correcte pour murs/sols/plafonds, ombrage dynamique basé sur la distance) et conception d'une architecture modulaire pour la gestion des entités et des Render Targets.",
 		"features": [
-			"Moteur 3D Raycaster développé 100% from-scratch",
-			"Texture mapping avancé (Murs, Sol, Plafond) avec ombrage dynamique et Fog",
-			"Architecture logicielle modulaire (Hooks, Smart Pointers, Caching)",
-			"Système de santé mentale dynamique (Line of Sight, Slender-like)",
-			"Mini-map rotative en temps réel via Render Targets"
+			"Moteur de rendu Raycaster 100% logiciel (From Scratch).",
+			"Texture Mapping avancé avec perspective correcte (Murs, Sol, Plafond).",
+			"Système de caméra complet avec Rotation et Pitch (regard haut/bas).",
+			"Ombrage dynamique (Fog) et gestion de l'Additive Blending pour les effets de lumière (Glow des objets).",
+			"Architecture modulaire et Caching de textures optimisé.",
+			"Minimap rotative en temps réel via Render Targets personnalisées.",
+			"Système d'entités animées (spritesheet) et UI Prompt contextuel."
 		],
 		"gallery": [
-			"./exemple.png"
+			"./image_1.png",
+			"./image_2.png",
+			"./chest.png"
 		],
-		"version": "0.1.0"
+		"version": "0.2.0"
 	}
 }

@@ -111,6 +111,8 @@ namespace Raycaster
         Uint32 lastTime = SDL_GetTicks();
         double deltaTime = 0;
 
+        sdl::AudioManager::get().playMusic("game.mp3");
+
         while (!_quit) {
             Uint32 currentTime = SDL_GetTicks();
             deltaTime = (currentTime - lastTime) / 1000.0;

@@ -14,4 +14,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 add_executable(TheConjuringTrap ${SOURCES})
 
-target_link_libraries(TheConjuringTrap SDL2::SDL2 SDL2_image)
+target_link_libraries(TheConjuringTrap SDL2::SDL2 SDL2_image SDL2_mixer)

@@ -167,6 +167,8 @@ namespace Raycaster
 
     void Engine::update(double deltaTime)
     {
+        _player.update(deltaTime);
+
         for (auto &entity : _entities)
             entity->update(deltaTime);
 

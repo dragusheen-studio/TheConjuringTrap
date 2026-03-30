@@ -61,6 +61,8 @@ namespace Raycaster
                 if (interactObj) interactObj->interact(_render, _player);
             }
         });
+        _keyboard.bindOnPressed(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(true); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(false); });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -77,6 +79,8 @@ namespace Raycaster
                 if (interactObj) interactObj->interact(_render, _player);
             }
         });
+        _gameController.bindAnyControllerOnButtonPressed(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(true); });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(false); });
     }
 
     /* ----- GETTERS ----- */

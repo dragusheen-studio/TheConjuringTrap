@@ -37,6 +37,12 @@ namespace Raycaster
         return _keys > 0;
     }
 
+    /* ----- SETTERs ----- */
+    void Player::setSprint(bool sprint)
+    {
+        _sprint = sprint;
+    }
+
     /* ----- FUNCTIONs ----- */
     void Player::gainKey()
     {
@@ -78,18 +84,24 @@ namespace Raycaster
 
     void Player::forward(double deltaTime, const Map &map)
     {
-        double moveX = _delta.x * _speed * deltaTime;
-        double moveY = _delta.y * _speed * deltaTime;
+        double speed = _speed;
+        if (_sprint) speed *= _sprintMultiplier;
+
+        double moveY = _delta.y * speed * deltaTime;
+        double moveX = _delta.x * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
     }
 
     void Player::strafe(double deltaTime, const Map &map)
     {
+        double speed = _speed;
+        if (_sprint) speed *= _sprintMultiplier;
+
         double strafeAngle = _angle + (M_PI / 2.0);
 
-        double moveX = cos(strafeAngle) * 5 * _speed * deltaTime;
-        double moveY = sin(strafeAngle) * 5 * _speed * deltaTime;
+        double moveX = cos(strafeAngle) * 5 * speed * deltaTime;
+        double moveY = sin(strafeAngle) * 5 * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
     }

@@ -31,6 +31,8 @@ namespace Raycaster
             double getPitch() const;
             bool hasKey() const;
 
+            void setSprint(bool sprint);
+
             void gainKey();
             void useKey();
             void rotate(double deltaTime, double force);
@@ -45,11 +47,13 @@ namespace Raycaster
             double _pitch = 0.0;
             sdl::Vector<double> _delta;
 
-            double _speed = 35;
+            double _speed = 20;
+            double _sprintMultiplier = 2.2;
             double _rotationSpeed = 2.5;
             double _mouseSensitivity = 0.003;
             int _size = 16;
             int _keys = 0;
+            bool _sprint = false;
 
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);

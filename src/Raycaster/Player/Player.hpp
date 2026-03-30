@@ -12,6 +12,7 @@
 
 /* ----- INCLUDEs ----- */
 #include <SDL2/SDL.h>
+#include "SDL/AudioManager/AudioManager.hpp"
 #include "SDL/Color/Color.hpp"
 #include "SDL/Drawable/Drawable.hpp"
 #include "SDL/Movable/Movable.hpp"
@@ -62,9 +63,21 @@ namespace Raycaster
             double _staminaRecovery = 20.0;
             bool _isMoving = false;
 
+            double _footstepDistanceCounter = 0.0;
+            double _stepThreshold = 45.0;
+            std::vector<std::string> _footstepSounds = {
+                "footsteps/Foodstep Metal 1.ogg",
+                "footsteps/Foodstep Metal 2.ogg",
+                "footsteps/Foodstep Metal 3.ogg",
+                "footsteps/Foodstep Metal 4.ogg",
+                "footsteps/Foodstep Metal 5.ogg",
+            };
+            int _footstepSoundIndex = 0;
+
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);
             void _updateStamina(double deltaTime);
+            void _updateFootsteps(sdl::Vector<double> oldPos);
     };
 }; // namespace Raycaster
 

@@ -29,7 +29,7 @@ namespace sdl
             void playMusic(const std::string &path);
             void stopMusic();
 
-            void playSound(const std::string &path);
+            void playSound(const std::string &path, int volumeAttenuation = -1);
 
             void setVolume(int volume);
             int getVolume();

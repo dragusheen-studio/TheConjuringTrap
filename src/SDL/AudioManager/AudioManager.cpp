@@ -51,6 +51,8 @@ namespace sdl
     {
         _volume = volume;
         Mix_VolumeMusic(_volume);
+        for (auto &sound : _sounds)
+            Mix_VolumeChunk(sound.second.get(), _volume);
     }
 
     /* ----- FUNCTIONs ----- */
@@ -63,8 +65,6 @@ namespace sdl
             if (!raw) throw Error(std::string("Erreur chargement musique: ") + finalPath, "AudioManager::playMusic");
             _musics[finalPath] = std::shared_ptr<Mix_Music>(raw, Mix_FreeMusic);
         }
-
-        Mix_VolumeMusic(_volume);
         Mix_PlayMusic(_musics[finalPath].get(), -1);
     }
 
@@ -73,7 +73,7 @@ namespace sdl
         Mix_HaltMusic();
     }
 
-    void AudioManager::playSound(const std::string &path)
+    void AudioManager::playSound(const std::string &path, int volumeAttenuation)
     {
         const std::string finalPath = _prefix + _soundPrefix + path;
 
@@ -83,7 +83,14 @@ namespace sdl
             _sounds[finalPath] = std::shared_ptr<Mix_Chunk>(raw, Mix_FreeChunk);
         }
 
-        Mix_VolumeChunk(_sounds[finalPath].get(), _volume);
+        int targetVolume = _volume;
+        if (volumeAttenuation > 0) {
+            double factor = (100.0 - (double)volumeAttenuation) / 100.0;
+            if (factor < 0) factor = 0;
+            targetVolume = (int)(_volume * factor);
+        }
+
+        Mix_VolumeChunk(_sounds[finalPath].get(), targetVolume);
         Mix_PlayChannel(-1, _sounds[finalPath].get(), 0);
     }
 }; // namespace sdl

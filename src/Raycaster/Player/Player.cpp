@@ -14,7 +14,7 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Player::Player(sdl::Vector<double> position)
-        : Movable(position)
+        : Movable(position), _stepThreshold(_speed * _sprintMultiplier)
     {
         _angle = 0;
         _delta.x = cos(_angle) * 5;
@@ -85,6 +85,7 @@ namespace Raycaster
     void Player::forward(double deltaTime, const Map &map)
     {
         _isMoving = true;
+        sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
         if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
@@ -93,11 +94,13 @@ namespace Raycaster
         double moveX = _delta.x * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
+        _updateFootsteps(oldPos);
     }
 
     void Player::strafe(double deltaTime, const Map &map)
     {
         _isMoving = true;
+        sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
         if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
@@ -108,6 +111,7 @@ namespace Raycaster
         double moveY = sin(strafeAngle) * 5 * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
+        _updateFootsteps(oldPos);
     }
 
     void Player::update(double deltaTime)
@@ -156,5 +160,18 @@ namespace Raycaster
 
         if ((int)oldStamina != (int)_stamina) std::cout << "Stamina: " << (int)_stamina << "%" << std::endl;
         _isMoving = false;
+    }
+
+    void Player::_updateFootsteps(sdl::Vector<double> oldPos)
+    {
+        double distanceMoved = _position.dist(oldPos);
+        if (distanceMoved <= 0) return;
+
+        _footstepDistanceCounter += distanceMoved;
+        if (_footstepDistanceCounter >= _stepThreshold) {
+            _footstepDistanceCounter = 0;
+            sdl::AudioManager::get().playSound(_footstepSounds[_footstepSoundIndex], (_sprint && _stamina > 2) ? -1 : 60);
+            _footstepSoundIndex = (_footstepSoundIndex + 1) % _footstepSounds.size();
+        }
     }
 }; // namespace Raycaster

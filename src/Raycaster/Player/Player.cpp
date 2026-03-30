@@ -37,6 +37,12 @@ namespace Raycaster
         return _keys > 0;
     }
 
+    /* ----- SETTERs ----- */
+    void Player::setSprint(bool sprint)
+    {
+        _sprint = sprint;
+    }
+
     /* ----- FUNCTIONs ----- */
     void Player::gainKey()
     {
@@ -78,20 +84,35 @@ namespace Raycaster
 
     void Player::forward(double deltaTime, const Map &map)
     {
-        double moveX = _delta.x * _speed * deltaTime;
-        double moveY = _delta.y * _speed * deltaTime;
+        _isMoving = true;
+
+        double speed = _speed;
+        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+
+        double moveY = _delta.y * speed * deltaTime;
+        double moveX = _delta.x * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
     }
 
     void Player::strafe(double deltaTime, const Map &map)
     {
+        _isMoving = true;
+
+        double speed = _speed;
+        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+
         double strafeAngle = _angle + (M_PI / 2.0);
 
-        double moveX = cos(strafeAngle) * 5 * _speed * deltaTime;
-        double moveY = sin(strafeAngle) * 5 * _speed * deltaTime;
+        double moveX = cos(strafeAngle) * 5 * speed * deltaTime;
+        double moveY = sin(strafeAngle) * 5 * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
+    }
+
+    void Player::update(double deltaTime)
+    {
+        _updateStamina(deltaTime);
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */
@@ -117,5 +138,23 @@ namespace Raycaster
         if (!map.isSolidCellAt(checkY)) nextPos.y += moveY;
 
         return nextPos;
+    }
+
+    void Player::_updateStamina(double deltaTime)
+    {
+        double oldStamina = _stamina;
+
+        if (_sprint && _isMoving && _stamina > 0) {
+            _stamina -= _staminaConsumption * deltaTime;
+            if (_stamina < 0) _stamina = 0;
+        } else {
+            if (_stamina < _maxStamina) {
+                _stamina += _staminaRecovery * deltaTime;
+                if (_stamina > _maxStamina) _stamina = _maxStamina;
+            }
+        }
+
+        if ((int)oldStamina != (int)_stamina) std::cout << "Stamina: " << (int)_stamina << "%" << std::endl;
+        _isMoving = false;
     }
 }; // namespace Raycaster

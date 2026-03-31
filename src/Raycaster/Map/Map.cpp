@@ -20,13 +20,13 @@ namespace Raycaster
         _map.clear();
 
         _cellDatas[' '] = CellData(CellType::EMPTY, false, render);
-        _cellDatas['X'] = CellData(CellType::WALL, true, render, "wall.png");
+        _cellDatas['X'] = CellData(CellType::WALL, true, render, "map/wall.png");
         _cellDatas['P'] = CellData(CellType::PLAYER, false, render);
         _cellDatas['C'] = CellData(CellType::CHEST, false, render);
         _cellDatas['L'] = CellData(CellType::LOCKED_CHEST, false, render);
 
-        _floorTexture = sdl::TextureManager::get().get(render, "floor.png");
-        _ceilingTexture = sdl::TextureManager::get().get(render, "ceiling.png");
+        _floorTexture = sdl::TextureManager::get().get(render, "map/floor.png");
+        _ceilingTexture = sdl::TextureManager::get().get(render, "map/ceiling.png");
 
         _buildMap(fileName);
     }

@@ -122,6 +122,7 @@ namespace Raycaster
 
     void Player::update(double deltaTime)
     {
+        _updateMentalHealth(deltaTime);
         _updateStamina(deltaTime);
     }
 
@@ -160,11 +161,13 @@ namespace Raycaster
 
     void Player::_updateStamina(double deltaTime)
     {
+        double fatigueMult = 1.0 + (1.0 - (_mentalHealth / _maxMentalHealth)) * 1.5;
+
         if (_sprint.isSprinting && _sprint.isMoving && _sprint.stamina > 0) {
-            _sprint.stamina -= _sprint.staminaConsumption * deltaTime;
+            _sprint.stamina -= (_sprint.staminaConsumption * fatigueMult) * deltaTime;
             if (_sprint.stamina < 0) _sprint.stamina = 0;
         } else {
-            if (_sprint.stamina < _sprint.maxStamina) {
+            if (_mentalHealth > _maxMentalHealth / 2 && _sprint.stamina < _sprint.maxStamina) {
                 _sprint.stamina += _sprint.staminaRecovery * deltaTime;
                 if (_sprint.stamina > _sprint.maxStamina) _sprint.stamina = _sprint.maxStamina;
             }
@@ -183,6 +186,22 @@ namespace Raycaster
             _footstepSound.distanceCounter = 0;
             sdl::AudioManager::get().playSound(_footstepSound.sounds[_footstepSound.index], (_sprint.isSprinting && _sprint.stamina > 2) ? -1 : 60);
             _footstepSound.index = (_footstepSound.index + 1) % _footstepSound.sounds.size();
+        }
+    }
+
+    void Player::_updateMentalHealth(double deltaTime)
+    {
+        if (!_sprint.isMoving) {
+            _idleTimer += deltaTime;
+        } else {
+            _idleTimer = 0.0;
+        }
+
+        if (_idleTimer >= _idleThreshold) {
+            if (_mentalHealth < _maxMentalHealth) {
+                _mentalHealth += _mentalHealthRecovery * deltaTime;
+                if (_mentalHealth > _maxMentalHealth) _mentalHealth = _maxMentalHealth;
+            }
         }
     }
 }; // namespace Raycaster

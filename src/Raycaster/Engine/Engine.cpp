@@ -155,12 +155,16 @@ namespace Raycaster
         double playerAngle = _player.getAngle();
         sdl::Vector<double> pPos = _player.getPosition();
 
+        double mentalRatio = _player.getMentalHealth() / _player.getMaxMentalHealth();
+        double dynamicDov = 2.0 + (mentalRatio * (_dov - 2.0));
+
         for (int i = 0; i < _numRays; i++) {
             _rays[i].ray.setAngle(playerAngle + _rays[i].offset);
             _rays[i].ray.setPosition(pPos);
             _rays[i].ray.setPitch(_player.getPitch());
-            _rays[i].ray.compute(_map, _player);
+            _rays[i].ray.setDepthOfField(dynamicDov);
 
+            _rays[i].ray.compute(_map, _player);
             _zBuffer[i] = _rays[i].ray.getDistance();
         }
 

@@ -33,6 +33,7 @@ namespace Raycaster
     void Entity::draw(sdl::Render &render)
     {
         if (!_visible || !_zBufferRef || !_animator) return;
+        if (_distance > (_cellSize * _dov)) return;
 
         std::shared_ptr<sdl::Texture> texture = _animator->getTexture();
         if (!texture) return;
@@ -143,6 +144,9 @@ namespace Raycaster
     void Entity::compute(const Player &player, const std::vector<double> &zBuffer)
     {
         _zBufferRef = &zBuffer;
+
+        double mentalRatio = player.getMentalHealth() / player.getMaxMentalHealth();
+        _dov = 2.0 + (mentalRatio * (5.0 - 2.0));
 
         double dx = _position.x - player.getPosition().x;
         double dy = _position.y - player.getPosition().y;

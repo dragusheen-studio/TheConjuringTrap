@@ -86,12 +86,16 @@ namespace Raycaster
             Sprint _sprint;
             FootstepSound _footstepSound;
 
-            double _mentalHealth = 60.0;
+            double _mentalHealth = 0.0;
             double _maxMentalHealth = 100.0;
+            double _mentalHealthRecovery = 1.5;
+            double _idleTimer = 0.0;
+            const double _idleThreshold = 4.0;
 
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);
             void _updateStamina(double deltaTime);
+            void _updateMentalHealth(double deltaTime);
             void _updateFootsteps(sdl::Vector<double> oldPos);
     };
 }; // namespace Raycaster

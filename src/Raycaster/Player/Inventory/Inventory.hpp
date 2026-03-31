@@ -22,12 +22,17 @@ namespace Raycaster
             ~Inventory() = default;
 
             bool hasKey() const;
+            bool hasPill() const;
 
             void gainKey();
+            void gainPill();
+
             void useKey();
+            void usePill();
 
         private:
             int _keys = 0;
+            int _pills = 0;
     };
 }; // namespace Raycaster
 

@@ -17,6 +17,7 @@ namespace Raycaster
     {
         _indicators.push_back(std::make_unique<StaminaIndicator>(render));
         _indicators.push_back(std::make_unique<KeysIndicator>(render));
+        _indicators.push_back(std::make_unique<PillsIndicator>(render));
     }
 
     /* ----- DRAWABLE ----- */

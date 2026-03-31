@@ -69,16 +69,27 @@ namespace sdl
         return _size;
     }
 
+    /* ----- SETTERs ----- */
+    void Texture::setColor(sdl::Color &color)
+    {
+        SDL_SetTextureColorMod(_texture, color.r, color.g, color.b);
+    }
+
+    void Texture::setOpacity(int opacity)
+    {
+        SDL_SetTextureAlphaMod(_texture, opacity);
+    }
+
+    void Texture::setBlendMode(SDL_BlendMode blendMode)
+    {
+        SDL_SetTextureBlendMode(_texture, blendMode);
+    }
+
     /* ----- FUNCTIONs ----- */
     sdl::Color Texture::getPixel(int x, int y) const
     {
         if (x < 0 || x >= _size.x || y < 0 || y >= _size.y)
             return sdl::Color::BLACK;
         return _pixelCache[y * _size.x + x];
-    }
-
-    void Texture::applyOnTexture(sdl::Color &color)
-    {
-        SDL_SetTextureColorMod(_texture, color.r, color.g, color.b);
     }
 }; // namespace sdl

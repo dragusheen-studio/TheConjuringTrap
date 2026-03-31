@@ -35,8 +35,11 @@ namespace sdl
             int getWidth() const;
             int getHeight() const;
 
+            void setColor(sdl::Color &color);
+            void setOpacity(int opacity);
+            void setBlendMode(SDL_BlendMode blendMode);
+
             sdl::Color getPixel(int x, int y) const;
-            void applyOnTexture(sdl::Color &color);
 
         private:
             SDL_Texture *_texture;

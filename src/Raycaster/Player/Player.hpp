@@ -55,9 +55,9 @@ namespace Raycaster
             struct Sprint {
                     bool isSprinting = false;
                     double stamina = 100.0;
-                    double maxStamina = 100.0;
-                    double staminaConsumption = 20.0;
-                    double staminaRecovery = 10.0;
+                    double max = 100.0;
+                    double consumption = 20.0;
+                    double recovery = 10.0;
                     bool isMoving = false;
             };
             struct FootstepSound {
@@ -72,6 +72,13 @@ namespace Raycaster
                     };
                     int index = 0;
             };
+            struct MentalHealth {
+                    double value = 0.0;
+                    double max = 100.0;
+                    double recovery = 1.5;
+                    double idleTimer = 0.0;
+                    const double idleThreshold = 4.0;
+            };
 
             double _angle;
             double _pitch = 0.0;
@@ -85,12 +92,7 @@ namespace Raycaster
 
             Sprint _sprint;
             FootstepSound _footstepSound;
-
-            double _mentalHealth = 0.0;
-            double _maxMentalHealth = 100.0;
-            double _mentalHealthRecovery = 1.5;
-            double _idleTimer = 0.0;
-            const double _idleThreshold = 4.0;
+            MentalHealth _mentalHealth;
 
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);

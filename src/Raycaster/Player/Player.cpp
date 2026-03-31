@@ -42,17 +42,17 @@ namespace Raycaster
 
     double Player::getMaxStamina() const
     {
-        return _sprint.maxStamina;
+        return _sprint.max;
     }
 
     double Player::getMentalHealth() const
     {
-        return _mentalHealth;
+        return _mentalHealth.value;
     }
 
     double Player::getMaxMentalHealth() const
     {
-        return _maxMentalHealth;
+        return _mentalHealth.max;
     }
 
     /* ----- SETTERs ----- */
@@ -130,8 +130,8 @@ namespace Raycaster
     {
         if (!inventory->hasPill()) return;
         inventory->usePill();
-        _mentalHealth += 40;
-        if (_mentalHealth > _maxMentalHealth) _mentalHealth = _maxMentalHealth;
+        _mentalHealth.value += 40;
+        if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */
@@ -161,15 +161,15 @@ namespace Raycaster
 
     void Player::_updateStamina(double deltaTime)
     {
-        double fatigueMult = 1.0 + (1.0 - (_mentalHealth / _maxMentalHealth)) * 1.5;
+        double fatigueMult = 1.0 + (1.0 - (_mentalHealth.value / _mentalHealth.max)) * 1.5;
 
         if (_sprint.isSprinting && _sprint.isMoving && _sprint.stamina > 0) {
-            _sprint.stamina -= (_sprint.staminaConsumption * fatigueMult) * deltaTime;
+            _sprint.stamina -= (_sprint.consumption * fatigueMult) * deltaTime;
             if (_sprint.stamina < 0) _sprint.stamina = 0;
         } else {
-            if (_mentalHealth > _maxMentalHealth / 2 && _sprint.stamina < _sprint.maxStamina) {
-                _sprint.stamina += _sprint.staminaRecovery * deltaTime;
-                if (_sprint.stamina > _sprint.maxStamina) _sprint.stamina = _sprint.maxStamina;
+            if (_mentalHealth.value > _mentalHealth.max / 2 && _sprint.stamina < _sprint.max) {
+                _sprint.stamina += _sprint.recovery * deltaTime;
+                if (_sprint.stamina > _sprint.max) _sprint.stamina = _sprint.max;
             }
         }
 
@@ -191,16 +191,11 @@ namespace Raycaster
 
     void Player::_updateMentalHealth(double deltaTime)
     {
-        if (!_sprint.isMoving) {
-            _idleTimer += deltaTime;
-        } else {
-            _idleTimer = 0.0;
-        }
-
-        if (_idleTimer >= _idleThreshold) {
-            if (_mentalHealth < _maxMentalHealth) {
-                _mentalHealth += _mentalHealthRecovery * deltaTime;
-                if (_mentalHealth > _maxMentalHealth) _mentalHealth = _maxMentalHealth;
+        _mentalHealth.idleTimer = _sprint.isMoving ? 0.0 : _mentalHealth.idleTimer + deltaTime;
+        if (_mentalHealth.idleTimer >= _mentalHealth.idleThreshold) {
+            if (_mentalHealth.value < _mentalHealth.max) {
+                _mentalHealth.value += _mentalHealth.recovery * deltaTime;
+                if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
             }
         }
     }

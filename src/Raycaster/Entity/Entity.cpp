@@ -52,9 +52,9 @@ namespace Raycaster
 
         if (_selected) {
             sdl::Color glowColor(255, 200, 0, 255);
-            texture->applyOnTexture(glowColor);
+            texture->setColor(glowColor);
 
-            SDL_SetTextureBlendMode(texture->getSDLTexture(), SDL_BLENDMODE_ADD);
+            texture->setBlendMode(SDL_BLENDMODE_ADD);
 
             double timeSec = SDL_GetTicks() / 1000.0;
             double pulse = (sin(timeSec * 5.0) + 1.0) / 2.0;
@@ -79,13 +79,13 @@ namespace Raycaster
                     }
                 }
             }
-            SDL_SetTextureBlendMode(texture->getSDLTexture(), SDL_BLENDMODE_BLEND);
+            texture->setBlendMode(SDL_BLENDMODE_BLEND);
         }
 
         double shadow = 1.0 - (_distance / (_cellSize * _dov));
         if (shadow < 0.0) shadow = 0.0;
         sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
-        texture->applyOnTexture(shadowColor);
+        texture->setColor(shadowColor);
 
         for (int i = startRay; i < endRay; i++) {
             if (i >= 0 && i < _numRays) {

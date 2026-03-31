@@ -15,9 +15,12 @@ namespace sdl
     /* ----- DEFAULTs ----- */
     Render::Render(Vector<int> size, const char *title, sdl::Color clearColor, Vector<int> position)
         : _size(size), _title(title), _clearColor(clearColor)
+
     {
-        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO);
         IMG_Init(IMG_INIT_PNG);
+
+        AudioManager::get();
 
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 

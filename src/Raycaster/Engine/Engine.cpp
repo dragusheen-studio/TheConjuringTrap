@@ -42,6 +42,7 @@ namespace Raycaster
             else if (spawn.type == CellType::LOCKED_CHEST)
                 _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
         }
+        _hud = std::make_unique<HUD>(_render);
         _promptUI = std::make_unique<PromptUI>(_render, "assets/config/ui/interact/interact.yaml");
 
         _render.setUseMouse(true);
@@ -61,6 +62,8 @@ namespace Raycaster
                 if (interactObj) interactObj->interact(_render, _player);
             }
         });
+        _keyboard.bindOnPressed(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(true); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(false); });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -77,6 +80,8 @@ namespace Raycaster
                 if (interactObj) interactObj->interact(_render, _player);
             }
         });
+        _gameController.bindAnyControllerOnButtonPressed(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(true); });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(false); });
     }
 
     /* ----- GETTERS ----- */
@@ -110,6 +115,8 @@ namespace Raycaster
     {
         Uint32 lastTime = SDL_GetTicks();
         double deltaTime = 0;
+
+        sdl::AudioManager::get().playMusic("game.mp3");
 
         while (!_quit) {
             Uint32 currentTime = SDL_GetTicks();
@@ -161,6 +168,9 @@ namespace Raycaster
 
     void Engine::update(double deltaTime)
     {
+        _player.update(deltaTime);
+        _hud->update(deltaTime, &_player);
+
         for (auto &entity : _entities)
             entity->update(deltaTime);
 
@@ -190,6 +200,7 @@ namespace Raycaster
         _minimap.draw(_render);
 
         if (_currentTarget && _promptUI) _promptUI->draw(_render);
+        _hud->draw(_render);
 
         _render.present();
     }

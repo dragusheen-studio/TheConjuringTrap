@@ -13,6 +13,7 @@
 /* ----- INCLUDEs ----- */
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "SDL/AudioManager/AudioManager.hpp"
 #include "SDL/Color/Color.hpp"
 #include "SDL/Vector/Vector.hpp"
 

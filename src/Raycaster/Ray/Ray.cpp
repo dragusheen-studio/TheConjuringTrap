@@ -168,7 +168,7 @@ namespace Raycaster
             sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
             if (_hit.vertical) shadowColor *= 0.6;
 
-            _hit.texture->applyOnTexture(shadowColor);
+            _hit.texture->setColor(shadowColor);
             SDL_RenderCopy(render.getRenderer(), _hit.texture->getSDLTexture(), &srcRect, &dstRect);
         } else {
             _fogColor.apply(render);

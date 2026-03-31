@@ -14,7 +14,7 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Player::Player(sdl::Vector<double> position)
-        : Movable(position)
+        : Movable(position), _stepThreshold(_speed * _sprintMultiplier)
     {
         _angle = 0;
         _delta.x = cos(_angle) * 5;
@@ -35,6 +35,22 @@ namespace Raycaster
     bool Player::hasKey() const
     {
         return _keys > 0;
+    }
+
+    double Player::getStamina() const
+    {
+        return _stamina;
+    }
+
+    double Player::getMaxStamina() const
+    {
+        return _maxStamina;
+    }
+
+    /* ----- SETTERs ----- */
+    void Player::setSprint(bool sprint)
+    {
+        _sprint = sprint;
     }
 
     /* ----- FUNCTIONs ----- */
@@ -78,20 +94,39 @@ namespace Raycaster
 
     void Player::forward(double deltaTime, const Map &map)
     {
-        double moveX = _delta.x * _speed * deltaTime;
-        double moveY = _delta.y * _speed * deltaTime;
+        _isMoving = true;
+        sdl::Vector<double> oldPos = _position;
+
+        double speed = _speed;
+        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+
+        double moveY = _delta.y * speed * deltaTime;
+        double moveX = _delta.x * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
+        _updateFootsteps(oldPos);
     }
 
     void Player::strafe(double deltaTime, const Map &map)
     {
+        _isMoving = true;
+        sdl::Vector<double> oldPos = _position;
+
+        double speed = _speed;
+        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+
         double strafeAngle = _angle + (M_PI / 2.0);
 
-        double moveX = cos(strafeAngle) * 5 * _speed * deltaTime;
-        double moveY = sin(strafeAngle) * 5 * _speed * deltaTime;
+        double moveX = cos(strafeAngle) * 5 * speed * deltaTime;
+        double moveY = sin(strafeAngle) * 5 * speed * deltaTime;
 
         setPosition(_checkMovement(moveX, moveY, map));
+        _updateFootsteps(oldPos);
+    }
+
+    void Player::update(double deltaTime)
+    {
+        _updateStamina(deltaTime);
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */
@@ -117,5 +152,33 @@ namespace Raycaster
         if (!map.isSolidCellAt(checkY)) nextPos.y += moveY;
 
         return nextPos;
+    }
+
+    void Player::_updateStamina(double deltaTime)
+    {
+        if (_sprint && _isMoving && _stamina > 0) {
+            _stamina -= _staminaConsumption * deltaTime;
+            if (_stamina < 0) _stamina = 0;
+        } else {
+            if (_stamina < _maxStamina) {
+                _stamina += _staminaRecovery * deltaTime;
+                if (_stamina > _maxStamina) _stamina = _maxStamina;
+            }
+        }
+
+        _isMoving = false;
+    }
+
+    void Player::_updateFootsteps(sdl::Vector<double> oldPos)
+    {
+        double distanceMoved = _position.dist(oldPos);
+        if (distanceMoved <= 0) return;
+
+        _footstepDistanceCounter += distanceMoved;
+        if (_footstepDistanceCounter >= _stepThreshold) {
+            _footstepDistanceCounter = 0;
+            sdl::AudioManager::get().playSound(_footstepSounds[_footstepSoundIndex], (_sprint && _stamina > 2) ? -1 : 60);
+            _footstepSoundIndex = (_footstepSoundIndex + 1) % _footstepSounds.size();
+        }
     }
 }; // namespace Raycaster

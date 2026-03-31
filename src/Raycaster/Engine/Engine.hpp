@@ -25,6 +25,7 @@
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/Ray/Ray.hpp"
+#include "Raycaster/UI/HUD/HUD.hpp"
 #include "Raycaster/UI/PromptUI/PromptUI.hpp"
 
 /* ----- CLASS ----- */
@@ -72,6 +73,7 @@ namespace Raycaster
             std::vector<std::unique_ptr<Entity>> _entities;
             std::unique_ptr<PromptUI> _promptUI;
             Entity *_currentTarget = nullptr;
+            std::unique_ptr<HUD> _hud;
     };
 }; // namespace Raycaster
 

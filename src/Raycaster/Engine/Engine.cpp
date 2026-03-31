@@ -64,6 +64,7 @@ namespace Raycaster
         });
         _keyboard.bindOnPressed(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(true); });
         _keyboard.bindOnReleased(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(false); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_Q, [&](double deltaTime) { _player.usePill(); });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -82,6 +83,7 @@ namespace Raycaster
         });
         _gameController.bindAnyControllerOnButtonPressed(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(true); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(false); });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_B, [&](double deltaTime) { _player.usePill(); });
     }
 
     /* ----- GETTERS ----- */

@@ -34,6 +34,8 @@ namespace Raycaster
             double getPitch() const;
             double getStamina() const;
             double getMaxStamina() const;
+            double getMentalHealth() const;
+            double getMaxMentalHealth() const;
 
             void setSprint(bool sprint);
 
@@ -44,6 +46,7 @@ namespace Raycaster
             void forward(double deltaTime, const Map &map);
             void strafe(double deltaTime, const Map &map);
             void update(double deltaTime);
+            void usePill();
 
             std::shared_ptr<Inventory> inventory;
 
@@ -82,6 +85,9 @@ namespace Raycaster
 
             Sprint _sprint;
             FootstepSound _footstepSound;
+
+            double _mentalHealth = 60.0;
+            double _maxMentalHealth = 100.0;
 
             void _setDelta();
             sdl::Vector<double> _checkMovement(const double &moveX, const double &moveY, const Map &map);

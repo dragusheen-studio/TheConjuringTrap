@@ -45,6 +45,16 @@ namespace Raycaster
         return _sprint.maxStamina;
     }
 
+    double Player::getMentalHealth() const
+    {
+        return _mentalHealth;
+    }
+
+    double Player::getMaxMentalHealth() const
+    {
+        return _maxMentalHealth;
+    }
+
     /* ----- SETTERs ----- */
     void Player::setSprint(bool sprint)
     {
@@ -113,6 +123,14 @@ namespace Raycaster
     void Player::update(double deltaTime)
     {
         _updateStamina(deltaTime);
+    }
+
+    void Player::usePill()
+    {
+        if (!inventory->hasPill()) return;
+        inventory->usePill();
+        _mentalHealth += 40;
+        if (_mentalHealth > _maxMentalHealth) _mentalHealth = _maxMentalHealth;
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */

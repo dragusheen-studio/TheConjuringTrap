@@ -24,9 +24,9 @@ namespace Raycaster
         return (Chest::canInteract(player) && player.inventory->hasKey());
     }
 
-    bool LockedChest::interact(sdl::Render &render, Player &player)
+    bool LockedChest::interact(sdl::Render &render, Player &player, Engine &engine)
     {
-        if (Chest::interact(render, player)) {
+        if (Chest::interact(render, player, engine)) {
             player.inventory->useKey();
             return true;
         }

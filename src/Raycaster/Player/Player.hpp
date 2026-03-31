@@ -73,7 +73,7 @@ namespace Raycaster
                     int index = 0;
             };
             struct MentalHealth {
-                    double value = 0.0;
+                    double value = 100.0;
                     double max = 100.0;
                     double recovery = 1.5;
                     double idleTimer = 0.0;

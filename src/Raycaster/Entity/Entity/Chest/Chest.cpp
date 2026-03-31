@@ -8,13 +8,14 @@
 
 /* ----- INCLUDEs ----- */
 #include "./Chest.hpp"
+#include "Raycaster/Engine/Engine.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string config)
-        : Entity(engine, render, position, "assets/config/entity/chest/" + config, 0.5)
+    Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string config, std::unique_ptr<Item> item)
+        : Entity(engine, render, position, "assets/config/entity/chest/" + config, 0.5), _item(std::move(item))
     {
     }
 
@@ -24,13 +25,23 @@ namespace Raycaster
         return (!_isOpen && isTargeted());
     }
 
-    bool Chest::interact(sdl::Render &render, Player &player)
+    bool Chest::interact(sdl::Render &render, Player &player, Engine &engine)
     {
         if (_isOpen) return false;
 
         _isOpen = true;
         _animator->play("opening");
-        player.inventory->gainPill();
+
+        if (_item != nullptr) {
+            _item->pickup(player);
+            engine.addLootUI(_item->getIcon(), this);
+        }
         return true;
+    }
+
+    /* ----- SETTERs ----- */
+    void Chest::setItem(std::unique_ptr<Item> item)
+    {
+        _item = std::move(item);
     }
 }; // namespace Raycaster

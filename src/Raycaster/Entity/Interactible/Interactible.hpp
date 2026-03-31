@@ -17,13 +17,15 @@
 /* ----- CLASS ----- */
 namespace Raycaster
 {
+    class Engine;
+
     class Interactible
     {
         public:
             virtual ~Interactible() = default;
 
             virtual bool canInteract(Player &player) const = 0;
-            virtual bool interact(sdl::Render &render, Player &player) = 0;
+            virtual bool interact(sdl::Render &render, Player &player, Engine &engine) = 0;
     };
 }; // namespace Raycaster
 

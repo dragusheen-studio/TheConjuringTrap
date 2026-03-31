@@ -24,7 +24,7 @@ namespace Raycaster
 
             /* ----- OVERRIDE INTERACTIBLE ----- */
             bool canInteract(Player &player) const override;
-            bool interact(sdl::Render &render, Player &player) override;
+            bool interact(sdl::Render &render, Player &player, Engine &engine) override;
             /* ----- END INTERACTIBLE ----- */
     };
 }; // namespace Raycaster

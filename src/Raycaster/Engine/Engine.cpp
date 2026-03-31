@@ -37,10 +37,19 @@ namespace Raycaster
 
         const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
         for (const auto &spawn : spawns) {
-            if (spawn.type == CellType::CHEST)
-                _entities.push_back(std::make_unique<Chest>(*this, _render, spawn.position));
-            else if (spawn.type == CellType::LOCKED_CHEST)
-                _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
+            std::unique_ptr<Chest> entity;
+            std::unique_ptr<Item> item;
+            if (spawn.type == CellType::CHEST) {
+                entity = std::make_unique<Chest>(*this, _render, spawn.position);
+                item = std::make_unique<Item>(_render, "ui/keys.png", [](Player &p) { p.inventory->gainKey(); });
+            } else if (spawn.type == CellType::LOCKED_CHEST) {
+                entity = std::make_unique<LockedChest>(*this, _render, spawn.position);
+                item = std::make_unique<Item>(_render, "ui/pills.png", [](Player &p) { p.inventory->gainPill(); });
+            } else
+                continue;
+
+            entity->setItem(std::move(item));
+            _entities.push_back(std::move(entity));
         }
         _hud = std::make_unique<HUD>(_render);
         _promptUI = std::make_unique<PromptUI>(_render, "assets/config/ui/interact/interact.yaml");
@@ -59,7 +68,7 @@ namespace Raycaster
         _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
             if (_currentTarget) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(_currentTarget);
-                if (interactObj) interactObj->interact(_render, _player);
+                if (interactObj) interactObj->interact(_render, _player, *this);
             }
         });
         _keyboard.bindOnPressed(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(true); });
@@ -78,7 +87,7 @@ namespace Raycaster
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
             if (_currentTarget) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(_currentTarget);
-                if (interactObj) interactObj->interact(_render, _player);
+                if (interactObj) interactObj->interact(_render, _player, *this);
             }
         });
         _gameController.bindAnyControllerOnButtonPressed(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(true); });
@@ -132,6 +141,12 @@ namespace Raycaster
         }
     }
 
+    void Engine::addLootUI(std::shared_ptr<sdl::Texture> icon, const Entity *source)
+    {
+        _lootUI.push_back(std::make_unique<LootUI>(_render, icon, source));
+    }
+
+    /* ----- PRIVATEs FUNCTIONs ----- */
     void Engine::handleInput(double deltaTime)
     {
         SDL_Event e;
@@ -193,6 +208,13 @@ namespace Raycaster
             _promptUI->update(deltaTime, _currentTarget);
             _currentTarget->setSelected(true);
         }
+
+        for (auto it = _lootUI.begin(); it != _lootUI.end();) {
+            if (!(*it)->update(deltaTime))
+                it = _lootUI.erase(it);
+            else
+                ++it;
+        }
     }
 
     void Engine::render()
@@ -206,6 +228,8 @@ namespace Raycaster
         _minimap.draw(_render);
 
         if (_currentTarget && _promptUI) _promptUI->draw(_render);
+        for (auto &loot : _lootUI)
+            loot->draw(_render);
         _hud->draw(_render);
 
         _render.present();

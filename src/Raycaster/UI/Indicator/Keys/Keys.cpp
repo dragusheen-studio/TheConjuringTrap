@@ -23,6 +23,6 @@ namespace Raycaster
     /* ----- FUNCTIONs ----- */
     void KeysIndicator::update(double deltaTime, const Player *player)
     {
-        _icon->setOpacity(player->hasKey() ? 255 : 64);
+        _icon->setOpacity(player->inventory->hasKey() ? 255 : 64);
     }
 }; // namespace Raycaster

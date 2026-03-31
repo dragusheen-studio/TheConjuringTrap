@@ -21,7 +21,7 @@ namespace Raycaster
     /* ----- INTERACTIBLE ----- */
     bool LockedChest::canInteract(Player &player) const
     {
-        return (!_isOpen && isTargeted() && player.hasKey());
+        return (!_isOpen && isTargeted() && player.inventory->hasKey());
     }
 
     void LockedChest::interact(sdl::Render &render, Player &player)
@@ -30,6 +30,6 @@ namespace Raycaster
 
         _isOpen = true;
         _animator->play("opening");
-        player.useKey();
+        player.inventory->useKey();
     }
 }; // namespace Raycaster

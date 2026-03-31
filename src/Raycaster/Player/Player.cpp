@@ -14,11 +14,14 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Player::Player(sdl::Vector<double> position)
-        : Movable(position), _stepThreshold(_speed * _sprintMultiplier)
+        : Movable(position)
     {
+        inventory = std::make_shared<Inventory>();
+
         _angle = 0;
         _delta.x = cos(_angle) * 5;
         _delta.y = sin(_angle) * 5;
+        _footstepSound.stepThreshold = _speed * _sprintMultiplier;
     }
 
     /* ----- GETTERs ----- */
@@ -32,40 +35,23 @@ namespace Raycaster
         return _pitch;
     }
 
-    bool Player::hasKey() const
-    {
-        return _keys > 0;
-    }
-
     double Player::getStamina() const
     {
-        return _stamina;
+        return _sprint.stamina;
     }
 
     double Player::getMaxStamina() const
     {
-        return _maxStamina;
+        return _sprint.maxStamina;
     }
 
     /* ----- SETTERs ----- */
     void Player::setSprint(bool sprint)
     {
-        _sprint = sprint;
+        _sprint.isSprinting = sprint;
     }
 
     /* ----- FUNCTIONs ----- */
-    void Player::gainKey()
-    {
-        _keys++;
-        std::cout << _keys << std::endl;
-    }
-
-    void Player::useKey()
-    {
-        _keys--;
-        std::cout << _keys << std::endl;
-    }
-
     void Player::rotate(double deltaTime, double force)
     {
         _angle += _rotationSpeed * deltaTime * force;
@@ -94,11 +80,11 @@ namespace Raycaster
 
     void Player::forward(double deltaTime, const Map &map)
     {
-        _isMoving = true;
+        _sprint.isMoving = true;
         sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
-        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+        if (_sprint.isSprinting && _sprint.stamina > 0) speed *= _sprintMultiplier;
 
         double moveY = _delta.y * speed * deltaTime;
         double moveX = _delta.x * speed * deltaTime;
@@ -109,11 +95,11 @@ namespace Raycaster
 
     void Player::strafe(double deltaTime, const Map &map)
     {
-        _isMoving = true;
+        _sprint.isMoving = true;
         sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
-        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+        if (_sprint.isSprinting && _sprint.stamina > 0) speed *= _sprintMultiplier;
 
         double strafeAngle = _angle + (M_PI / 2.0);
 
@@ -156,17 +142,17 @@ namespace Raycaster
 
     void Player::_updateStamina(double deltaTime)
     {
-        if (_sprint && _isMoving && _stamina > 0) {
-            _stamina -= _staminaConsumption * deltaTime;
-            if (_stamina < 0) _stamina = 0;
+        if (_sprint.isSprinting && _sprint.isMoving && _sprint.stamina > 0) {
+            _sprint.stamina -= _sprint.staminaConsumption * deltaTime;
+            if (_sprint.stamina < 0) _sprint.stamina = 0;
         } else {
-            if (_stamina < _maxStamina) {
-                _stamina += _staminaRecovery * deltaTime;
-                if (_stamina > _maxStamina) _stamina = _maxStamina;
+            if (_sprint.stamina < _sprint.maxStamina) {
+                _sprint.stamina += _sprint.staminaRecovery * deltaTime;
+                if (_sprint.stamina > _sprint.maxStamina) _sprint.stamina = _sprint.maxStamina;
             }
         }
 
-        _isMoving = false;
+        _sprint.isMoving = false;
     }
 
     void Player::_updateFootsteps(sdl::Vector<double> oldPos)
@@ -174,11 +160,11 @@ namespace Raycaster
         double distanceMoved = _position.dist(oldPos);
         if (distanceMoved <= 0) return;
 
-        _footstepDistanceCounter += distanceMoved;
-        if (_footstepDistanceCounter >= _stepThreshold) {
-            _footstepDistanceCounter = 0;
-            sdl::AudioManager::get().playSound(_footstepSounds[_footstepSoundIndex], (_sprint && _stamina > 2) ? -1 : 60);
-            _footstepSoundIndex = (_footstepSoundIndex + 1) % _footstepSounds.size();
+        _footstepSound.distanceCounter += distanceMoved;
+        if (_footstepSound.distanceCounter >= _footstepSound.stepThreshold) {
+            _footstepSound.distanceCounter = 0;
+            sdl::AudioManager::get().playSound(_footstepSound.sounds[_footstepSound.index], (_sprint.isSprinting && _sprint.stamina > 2) ? -1 : 60);
+            _footstepSound.index = (_footstepSound.index + 1) % _footstepSound.sounds.size();
         }
     }
 }; // namespace Raycaster

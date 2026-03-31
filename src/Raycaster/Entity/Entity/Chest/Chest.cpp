@@ -30,6 +30,6 @@ namespace Raycaster
 
         _isOpen = true;
         _animator->play("opening");
-        player.gainKey();
+        player.inventory->gainKey();
     }
 }; // namespace Raycaster

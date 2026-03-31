@@ -16,6 +16,7 @@
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/UI/Indicator/Indicator.hpp"
 #include "Raycaster/UI/Indicator/Stamina/Stamina.hpp"
+#include "Raycaster/UI/Indicator/Keys/Keys.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster

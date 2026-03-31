@@ -37,6 +37,16 @@ namespace Raycaster
         return _keys > 0;
     }
 
+    double Player::getStamina() const
+    {
+        return _stamina;
+    }
+
+    double Player::getMaxStamina() const
+    {
+        return _maxStamina;
+    }
+
     /* ----- SETTERs ----- */
     void Player::setSprint(bool sprint)
     {
@@ -146,8 +156,6 @@ namespace Raycaster
 
     void Player::_updateStamina(double deltaTime)
     {
-        double oldStamina = _stamina;
-
         if (_sprint && _isMoving && _stamina > 0) {
             _stamina -= _staminaConsumption * deltaTime;
             if (_stamina < 0) _stamina = 0;
@@ -158,7 +166,6 @@ namespace Raycaster
             }
         }
 
-        if ((int)oldStamina != (int)_stamina) std::cout << "Stamina: " << (int)_stamina << "%" << std::endl;
         _isMoving = false;
     }
 

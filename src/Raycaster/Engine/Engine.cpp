@@ -42,6 +42,7 @@ namespace Raycaster
             else if (spawn.type == CellType::LOCKED_CHEST)
                 _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
         }
+        _hud = std::make_unique<HUD>(_render);
         _promptUI = std::make_unique<PromptUI>(_render, "assets/config/ui/interact/interact.yaml");
 
         _render.setUseMouse(true);
@@ -168,6 +169,7 @@ namespace Raycaster
     void Engine::update(double deltaTime)
     {
         _player.update(deltaTime);
+        _hud->update(deltaTime, &_player);
 
         for (auto &entity : _entities)
             entity->update(deltaTime);
@@ -198,6 +200,7 @@ namespace Raycaster
         _minimap.draw(_render);
 
         if (_currentTarget && _promptUI) _promptUI->draw(_render);
+        _hud->draw(_render);
 
         _render.present();
     }

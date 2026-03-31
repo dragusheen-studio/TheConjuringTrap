@@ -31,6 +31,8 @@ namespace Raycaster
             double getAngle() const;
             double getPitch() const;
             bool hasKey() const;
+            double getStamina() const;
+            double getMaxStamina() const;
 
             void setSprint(bool sprint);
 
@@ -59,8 +61,8 @@ namespace Raycaster
             bool _sprint = false;
             double _stamina = 100.0;
             double _maxStamina = 100.0;
-            double _staminaConsumption = 40.0;
-            double _staminaRecovery = 20.0;
+            double _staminaConsumption = 20.0;
+            double _staminaRecovery = 10.0;
             bool _isMoving = false;
 
             double _footstepDistanceCounter = 0.0;

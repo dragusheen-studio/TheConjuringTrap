@@ -11,13 +11,12 @@
 #define RAYCASTER_LOCKED_CHEST_HPP_
 
 /* ----- INCLUDEs ----- */
-#include "Raycaster/Entity/Entity.hpp"
-#include "Raycaster/Entity/Interactible/Interactible.hpp"
+#include "Raycaster/Entity/Entity/Chest/Chest.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster
 {
-    class LockedChest : public Entity, public Interactible
+    class LockedChest : public Chest
     {
         public:
             LockedChest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position);
@@ -25,11 +24,8 @@ namespace Raycaster
 
             /* ----- OVERRIDE INTERACTIBLE ----- */
             bool canInteract(Player &player) const override;
-            void interact(sdl::Render &render, Player &player) override;
+            bool interact(sdl::Render &render, Player &player) override;
             /* ----- END INTERACTIBLE ----- */
-
-        private:
-            bool _isOpen = false;
     };
 }; // namespace Raycaster
 

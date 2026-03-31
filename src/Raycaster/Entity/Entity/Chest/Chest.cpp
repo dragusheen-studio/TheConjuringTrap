@@ -13,8 +13,8 @@
 namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
-    Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
-        : Entity(engine, render, position, "assets/config/entity/chest/chest.yaml", 0.5)
+    Chest::Chest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position, std::string config)
+        : Entity(engine, render, position, "assets/config/entity/chest/" + config, 0.5)
     {
     }
 
@@ -24,12 +24,13 @@ namespace Raycaster
         return (!_isOpen && isTargeted());
     }
 
-    void Chest::interact(sdl::Render &render, Player &player)
+    bool Chest::interact(sdl::Render &render, Player &player)
     {
-        if (_isOpen) return;
+        if (_isOpen) return false;
 
         _isOpen = true;
         _animator->play("opening");
         player.inventory->gainPill();
+        return true;
     }
 }; // namespace Raycaster

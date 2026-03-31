@@ -23,7 +23,7 @@ namespace Raycaster
             virtual ~Interactible() = default;
 
             virtual bool canInteract(Player &player) const = 0;
-            virtual void interact(sdl::Render &render, Player &player) = 0;
+            virtual bool interact(sdl::Render &render, Player &player) = 0;
     };
 }; // namespace Raycaster
 

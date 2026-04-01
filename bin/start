@@ -14,7 +14,7 @@ run_project() {
 
 
     cd build
-    cmake ..
+    cmake -DBUILD_GAME=ON -DBUILD_TESTS=OFF ..
     make -j$(nproc)
 
     cd ..

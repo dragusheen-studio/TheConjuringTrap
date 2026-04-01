@@ -1,6 +1,11 @@
 /build/
+
 /bin/TheConjuringTrap
 TheConjuringTrap
+
+/bin/UnitTests
+UnitTests
+
 *.o
 *.a
 *.so

@@ -36,11 +36,13 @@ namespace Raycaster
 
     void Inventory::useKey()
     {
+        if (_keys <= 0) return;
         _keys--;
     }
 
     void Inventory::usePill()
     {
+        if (_pills <= 0) return;
         _pills--;
     }
 }; // namespace Raycaster

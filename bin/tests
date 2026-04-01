@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+cd "$PROJECT_ROOT"
+
+run_tests() {
+    if [ ! -d "build" ]; then
+        mkdir build
+    fi
+
+    if [ -f "UnitTests" ]; then
+        rm "UnitTests"
+    fi
+
+    cd build
+    cmake -DBUILD_GAME=OFF -DBUILD_TESTS=ON ..
+    make -j$(nproc)
+
+    cd ..
+
+    if [ -f "./UnitTests" ]; then
+        echo "--- Lancement des Tests Unitaires ---"
+        ./UnitTests
+    else
+        echo "Erreur : L'exécutable UnitTests n'a pas été généré."
+    fi
+    
+    echo ""
+    read -p "Pressez Entrée pour fermer cette fenêtre..."
+}
+
+gnome-terminal --tab --title="TheConjuringTrap Tests" -- bash -c "$(declare -f run_tests); run_tests"

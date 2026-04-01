@@ -38,17 +38,16 @@ namespace Raycaster
         const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
         for (const auto &spawn : spawns) {
             std::unique_ptr<Chest> entity;
-            std::unique_ptr<Item> item;
+
             if (spawn.type == CellType::CHEST) {
                 entity = std::make_unique<Chest>(*this, _render, spawn.position);
-                item = std::make_unique<Item>(_render, "ui/keys.png", [](Player &p) { p.inventory->gainKey(); });
+                entity->setItem(ItemFactory::get().create((rand() % 2 == 0) ? ItemFactory::SCREAMER : ItemFactory::KEY, _render));
             } else if (spawn.type == CellType::LOCKED_CHEST) {
                 entity = std::make_unique<LockedChest>(*this, _render, spawn.position);
-                item = std::make_unique<Item>(_render, "ui/pills.png", [](Player &p) { p.inventory->gainPill(); });
+                entity->setItem(ItemFactory::get().create(ItemFactory::PILL, _render));
             } else
                 continue;
 
-            entity->setItem(std::move(item));
             _entities.push_back(std::move(entity));
         }
         _hud = std::make_unique<HUD>(_render);
@@ -171,7 +170,9 @@ namespace Raycaster
         sdl::Vector<double> pPos = _player.getPosition();
 
         double mentalRatio = _player.getMentalHealth() / _player.getMaxMentalHealth();
-        double dynamicDov = 2.0 + (mentalRatio * (_dov - 2.0));
+        double scaredEffect = 1.0 - (_player.getScaredFactor() * 0.8);
+        double dynamicDov = (2.0 + (mentalRatio * (_dov - 2.0))) * scaredEffect;
+        if (dynamicDov < 1) dynamicDov = 1;
 
         for (int i = 0; i < _numRays; i++) {
             _rays[i].ray.setAngle(playerAngle + _rays[i].offset);

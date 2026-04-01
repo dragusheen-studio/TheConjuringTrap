@@ -36,6 +36,7 @@ namespace Raycaster
             double getMaxStamina() const;
             double getMentalHealth() const;
             double getMaxMentalHealth() const;
+            double getScaredFactor() const;
 
             void setSprint(bool sprint);
 
@@ -47,6 +48,7 @@ namespace Raycaster
             void strafe(double deltaTime, const Map &map);
             void update(double deltaTime);
             void usePill();
+            void scare(double force = 1.0);
 
             std::shared_ptr<Inventory> inventory;
 
@@ -90,6 +92,8 @@ namespace Raycaster
             double _mouseSensitivity = 0.003;
             int _size = 16;
 
+            double _scaredFactor = 0.0;
+
             Sprint _sprint;
             FootstepSound _footstepSound;
             MentalHealth _mentalHealth;
@@ -99,6 +103,7 @@ namespace Raycaster
             void _updateStamina(double deltaTime);
             void _updateMentalHealth(double deltaTime);
             void _updateFootsteps(sdl::Vector<double> oldPos);
+            void _updateScaredFactor(double deltaTime);
     };
 }; // namespace Raycaster
 

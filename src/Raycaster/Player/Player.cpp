@@ -55,6 +55,11 @@ namespace Raycaster
         return _mentalHealth.max;
     }
 
+    double Player::getScaredFactor() const
+    {
+        return _scaredFactor;
+    }
+
     /* ----- SETTERs ----- */
     void Player::setSprint(bool sprint)
     {
@@ -123,6 +128,7 @@ namespace Raycaster
     void Player::update(double deltaTime)
     {
         _updateMentalHealth(deltaTime);
+        _updateScaredFactor(deltaTime);
         _updateStamina(deltaTime);
     }
 
@@ -132,6 +138,14 @@ namespace Raycaster
         inventory->usePill();
         _mentalHealth.value += 40;
         if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
+    }
+
+    void Player::scare(double force)
+    {
+        _scaredFactor += force;
+        if (_scaredFactor > 1.0) _scaredFactor = 1.0;
+        _mentalHealth.value -= 10 * _scaredFactor;
+        if (_mentalHealth.value < 0) _mentalHealth.value = 0;
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */
@@ -197,6 +211,14 @@ namespace Raycaster
                 _mentalHealth.value += _mentalHealth.recovery * deltaTime;
                 if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
             }
+        }
+    }
+
+    void Player::_updateScaredFactor(double deltaTime)
+    {
+        if (_scaredFactor > 0) {
+            _scaredFactor -= 0.2 * deltaTime;
+            if (_scaredFactor < 0) _scaredFactor = 0;
         }
     }
 }; // namespace Raycaster

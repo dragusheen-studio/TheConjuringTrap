@@ -13,7 +13,7 @@
 /* ----- INCLUDEs ----- */
 #include "Raycaster/Entity/Entity.hpp"
 #include "Raycaster/Entity/Interactible/Interactible.hpp"
-#include "Raycaster/Item/Item.hpp"
+#include "Raycaster/Item/Item/Item.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster

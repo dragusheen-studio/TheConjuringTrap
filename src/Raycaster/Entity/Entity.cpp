@@ -51,8 +51,14 @@ namespace Raycaster
 
         SDL_Rect srcRect = _animator->getSrcRect();
 
+        double shadow = 1.0 - (_distance / (_cellSize * _dov));
+        if (shadow < 0.0) shadow = 0.0;
+        sdl::Color finalColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
+        finalColor *= shadow;
+
         if (_selected) {
             sdl::Color glowColor(255, 200, 0, 255);
+            glowColor *= shadow;
             texture->setColor(glowColor);
 
             texture->setBlendMode(SDL_BLENDMODE_ADD);
@@ -83,11 +89,7 @@ namespace Raycaster
             texture->setBlendMode(SDL_BLENDMODE_BLEND);
         }
 
-        double shadow = 1.0 - (_distance / (_cellSize * _dov));
-        if (shadow < 0.0) shadow = 0.0;
-        sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
-        texture->setColor(shadowColor);
-
+        texture->setColor(finalColor);
         for (int i = startRay; i < endRay; i++) {
             if (i >= 0 && i < _numRays) {
                 if (_distance < (*_zBufferRef)[i]) {
@@ -146,7 +148,10 @@ namespace Raycaster
         _zBufferRef = &zBuffer;
 
         double mentalRatio = player.getMentalHealth() / player.getMaxMentalHealth();
-        _dov = 2.0 + (mentalRatio * (5.0 - 2.0));
+        double scaredFactor = player.getScaredFactor();
+        double scaredEffect = 1.0 - (scaredFactor * 0.8);
+        _dov = (2.0 + (mentalRatio * (5.0 - 2.0))) * scaredEffect;
+        if (_dov < 0.5) _dov = 0.5;
 
         double dx = _position.x - player.getPosition().x;
         double dy = _position.y - player.getPosition().y;

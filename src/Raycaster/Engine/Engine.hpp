@@ -21,6 +21,7 @@
 #include "SDL/Render/Render.hpp"
 #include "Raycaster/Entity/Entity/Chest/Chest.hpp"
 #include "Raycaster/Entity/Entity/LockedChest/LockedChest.hpp"
+#include "Raycaster/Item/Factory/Factory.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"

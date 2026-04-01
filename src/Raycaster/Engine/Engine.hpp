@@ -21,11 +21,13 @@
 #include "SDL/Render/Render.hpp"
 #include "Raycaster/Entity/Entity/Chest/Chest.hpp"
 #include "Raycaster/Entity/Entity/LockedChest/LockedChest.hpp"
+#include "Raycaster/Item/Factory/Factory.hpp"
 #include "Raycaster/Map/Map.hpp"
 #include "Raycaster/Minimap/Minimap.hpp"
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/Ray/Ray.hpp"
 #include "Raycaster/UI/HUD/HUD.hpp"
+#include "Raycaster/UI/LootUI/LootUI.hpp"
 #include "Raycaster/UI/PromptUI/PromptUI.hpp"
 
 /* ----- CLASS ----- */
@@ -44,6 +46,7 @@ namespace Raycaster
             const sdl::Render &getRender() const;
 
             void run();
+            void addLootUI(std::shared_ptr<sdl::Texture> icon, const Entity *source);
 
         private:
             void handleInput(double deltaTime);
@@ -72,6 +75,7 @@ namespace Raycaster
             std::vector<double> _zBuffer;
             std::vector<std::unique_ptr<Entity>> _entities;
             std::unique_ptr<PromptUI> _promptUI;
+            std::vector<std::unique_ptr<LootUI>> _lootUI;
             Entity *_currentTarget = nullptr;
             std::unique_ptr<HUD> _hud;
     };

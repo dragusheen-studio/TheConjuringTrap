@@ -16,6 +16,9 @@ namespace Raycaster
     HUD::HUD(sdl::Render &render)
     {
         _indicators.push_back(std::make_unique<StaminaIndicator>(render));
+        _indicators.push_back(std::make_unique<KeysIndicator>(render));
+        _indicators.push_back(std::make_unique<PillsIndicator>(render));
+        _indicators.push_back(std::make_unique<MentalHealthIndicator>(render));
     }
 
     /* ----- DRAWABLE ----- */

@@ -14,22 +14,22 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     LockedChest::LockedChest(const Engine &engine, sdl::Render &render, sdl::Vector<double> position)
-        : Entity(engine, render, position, "assets/config/entity/chest/locked_chest.yaml", 0.5)
+        : Chest(engine, render, position, "locked_chest.yaml")
     {
     }
 
     /* ----- INTERACTIBLE ----- */
     bool LockedChest::canInteract(Player &player) const
     {
-        return (!_isOpen && isTargeted() && player.hasKey());
+        return (Chest::canInteract(player) && player.inventory->hasKey());
     }
 
-    void LockedChest::interact(sdl::Render &render, Player &player)
+    bool LockedChest::interact(sdl::Render &render, Player &player, Engine &engine)
     {
-        if (_isOpen) return;
-
-        _isOpen = true;
-        _animator->play("opening");
-        player.useKey();
+        if (Chest::interact(render, player, engine)) {
+            player.inventory->useKey();
+            return true;
+        }
+        return false;
     }
 }; // namespace Raycaster

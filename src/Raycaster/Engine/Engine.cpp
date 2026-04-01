@@ -37,10 +37,18 @@ namespace Raycaster
 
         const std::vector<Map::EntitySpawn> &spawns = _map.getEntitySpawns();
         for (const auto &spawn : spawns) {
-            if (spawn.type == CellType::CHEST)
-                _entities.push_back(std::make_unique<Chest>(*this, _render, spawn.position));
-            else if (spawn.type == CellType::LOCKED_CHEST)
-                _entities.push_back(std::make_unique<LockedChest>(*this, _render, spawn.position));
+            std::unique_ptr<Chest> entity;
+
+            if (spawn.type == CellType::CHEST) {
+                entity = std::make_unique<Chest>(*this, _render, spawn.position);
+                entity->setItem(ItemFactory::get().create((rand() % 2 == 0) ? ItemFactory::SCREAMER : ItemFactory::KEY, _render));
+            } else if (spawn.type == CellType::LOCKED_CHEST) {
+                entity = std::make_unique<LockedChest>(*this, _render, spawn.position);
+                entity->setItem(ItemFactory::get().create(ItemFactory::PILL, _render));
+            } else
+                continue;
+
+            _entities.push_back(std::move(entity));
         }
         _hud = std::make_unique<HUD>(_render);
         _promptUI = std::make_unique<PromptUI>(_render, "assets/config/ui/interact/interact.yaml");
@@ -59,11 +67,12 @@ namespace Raycaster
         _keyboard.bindOnReleased(SDL_SCANCODE_E, [&](double deltaTime) {
             if (_currentTarget) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(_currentTarget);
-                if (interactObj) interactObj->interact(_render, _player);
+                if (interactObj) interactObj->interact(_render, _player, *this);
             }
         });
         _keyboard.bindOnPressed(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(true); });
         _keyboard.bindOnReleased(SDL_SCANCODE_LSHIFT, [&](double deltaTime) { _player.setSprint(false); });
+        _keyboard.bindOnReleased(SDL_SCANCODE_Q, [&](double deltaTime) { _player.usePill(); });
 
         _gameController.bindAnyControllerLeftJoystick([&](double deltaTime, sdl::Vector<double> values) {
             _player.forward(-deltaTime * values.y, _map);
@@ -77,11 +86,12 @@ namespace Raycaster
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_A, [&](double deltaTime) {
             if (_currentTarget) {
                 Interactible *interactObj = dynamic_cast<Interactible *>(_currentTarget);
-                if (interactObj) interactObj->interact(_render, _player);
+                if (interactObj) interactObj->interact(_render, _player, *this);
             }
         });
         _gameController.bindAnyControllerOnButtonPressed(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(true); });
         _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_LEFTSTICK, [&](double deltaTime) { _player.setSprint(false); });
+        _gameController.bindAnyControllerOnButtonReleased(SDL_CONTROLLER_BUTTON_B, [&](double deltaTime) { _player.usePill(); });
     }
 
     /* ----- GETTERS ----- */
@@ -130,6 +140,12 @@ namespace Raycaster
         }
     }
 
+    void Engine::addLootUI(std::shared_ptr<sdl::Texture> icon, const Entity *source)
+    {
+        _lootUI.push_back(std::make_unique<LootUI>(_render, icon, source));
+    }
+
+    /* ----- PRIVATEs FUNCTIONs ----- */
     void Engine::handleInput(double deltaTime)
     {
         SDL_Event e;
@@ -153,12 +169,18 @@ namespace Raycaster
         double playerAngle = _player.getAngle();
         sdl::Vector<double> pPos = _player.getPosition();
 
+        double mentalRatio = _player.getMentalHealth() / _player.getMaxMentalHealth();
+        double scaredEffect = 1.0 - (_player.getScaredFactor() * 0.8);
+        double dynamicDov = (2.0 + (mentalRatio * (_dov - 2.0))) * scaredEffect;
+        if (dynamicDov < 1) dynamicDov = 1;
+
         for (int i = 0; i < _numRays; i++) {
             _rays[i].ray.setAngle(playerAngle + _rays[i].offset);
             _rays[i].ray.setPosition(pPos);
             _rays[i].ray.setPitch(_player.getPitch());
-            _rays[i].ray.compute(_map, _player);
+            _rays[i].ray.setDepthOfField(dynamicDov);
 
+            _rays[i].ray.compute(_map, _player);
             _zBuffer[i] = _rays[i].ray.getDistance();
         }
 
@@ -187,6 +209,13 @@ namespace Raycaster
             _promptUI->update(deltaTime, _currentTarget);
             _currentTarget->setSelected(true);
         }
+
+        for (auto it = _lootUI.begin(); it != _lootUI.end();) {
+            if (!(*it)->update(deltaTime))
+                it = _lootUI.erase(it);
+            else
+                ++it;
+        }
     }
 
     void Engine::render()
@@ -200,6 +229,8 @@ namespace Raycaster
         _minimap.draw(_render);
 
         if (_currentTarget && _promptUI) _promptUI->draw(_render);
+        for (auto &loot : _lootUI)
+            loot->draw(_render);
         _hud->draw(_render);
 
         _render.present();

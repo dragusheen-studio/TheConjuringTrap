@@ -15,7 +15,7 @@ namespace sdl
 {
     /* ----- DEFAULTs ----- */
     Texture::Texture(sdl::Render &render, const std::string &path)
-        : _texture(nullptr), _size(0, 0)
+        : _texture(nullptr), _size(0, 0), _path(path)
     {
         SDL_Surface *tempSurface = IMG_Load(path.c_str());
         if (!tempSurface) throw Error(std::string("Erreur de chargement: ") + path, "Texture::Texture");
@@ -49,6 +49,11 @@ namespace sdl
     }
 
     /* ----- GETTERs ----- */
+    std::string Texture::getPath() const
+    {
+        return _path;
+    }
+
     SDL_Texture *Texture::getSDLTexture() const
     {
         return _texture;

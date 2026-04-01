@@ -30,6 +30,7 @@ namespace sdl
             Texture(sdl::Render &render, const std::string &path);
             ~Texture();
 
+            std::string getPath() const;
             SDL_Texture *getSDLTexture() const;
             sdl::Vector<int> getSize() const;
             int getWidth() const;
@@ -42,6 +43,7 @@ namespace sdl
             sdl::Color getPixel(int x, int y) const;
 
         private:
+            std::string _path;
             SDL_Texture *_texture;
             sdl::Vector<int> _size;
             std::vector<sdl::Color> _pixelCache;

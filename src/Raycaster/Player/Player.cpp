@@ -14,11 +14,14 @@ namespace Raycaster
 {
     /* ----- DEFAULTs ----- */
     Player::Player(sdl::Vector<double> position)
-        : Movable(position), _stepThreshold(_speed * _sprintMultiplier)
+        : Movable(position)
     {
+        inventory = std::make_shared<Inventory>();
+
         _angle = 0;
         _delta.x = cos(_angle) * 5;
         _delta.y = sin(_angle) * 5;
+        _footstepSound.stepThreshold = _speed * _sprintMultiplier;
     }
 
     /* ----- GETTERs ----- */
@@ -32,40 +35,38 @@ namespace Raycaster
         return _pitch;
     }
 
-    bool Player::hasKey() const
-    {
-        return _keys > 0;
-    }
-
     double Player::getStamina() const
     {
-        return _stamina;
+        return _sprint.stamina;
     }
 
     double Player::getMaxStamina() const
     {
-        return _maxStamina;
+        return _sprint.max;
+    }
+
+    double Player::getMentalHealth() const
+    {
+        return _mentalHealth.value;
+    }
+
+    double Player::getMaxMentalHealth() const
+    {
+        return _mentalHealth.max;
+    }
+
+    double Player::getScaredFactor() const
+    {
+        return _scaredFactor;
     }
 
     /* ----- SETTERs ----- */
     void Player::setSprint(bool sprint)
     {
-        _sprint = sprint;
+        _sprint.isSprinting = sprint;
     }
 
     /* ----- FUNCTIONs ----- */
-    void Player::gainKey()
-    {
-        _keys++;
-        std::cout << _keys << std::endl;
-    }
-
-    void Player::useKey()
-    {
-        _keys--;
-        std::cout << _keys << std::endl;
-    }
-
     void Player::rotate(double deltaTime, double force)
     {
         _angle += _rotationSpeed * deltaTime * force;
@@ -94,11 +95,11 @@ namespace Raycaster
 
     void Player::forward(double deltaTime, const Map &map)
     {
-        _isMoving = true;
+        _sprint.isMoving = true;
         sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
-        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+        if (_sprint.isSprinting && _sprint.stamina > 0) speed *= _sprintMultiplier;
 
         double moveY = _delta.y * speed * deltaTime;
         double moveX = _delta.x * speed * deltaTime;
@@ -109,11 +110,11 @@ namespace Raycaster
 
     void Player::strafe(double deltaTime, const Map &map)
     {
-        _isMoving = true;
+        _sprint.isMoving = true;
         sdl::Vector<double> oldPos = _position;
 
         double speed = _speed;
-        if (_sprint && _stamina > 0) speed *= _sprintMultiplier;
+        if (_sprint.isSprinting && _sprint.stamina > 0) speed *= _sprintMultiplier;
 
         double strafeAngle = _angle + (M_PI / 2.0);
 
@@ -126,7 +127,25 @@ namespace Raycaster
 
     void Player::update(double deltaTime)
     {
+        _updateMentalHealth(deltaTime);
+        _updateScaredFactor(deltaTime);
         _updateStamina(deltaTime);
+    }
+
+    void Player::usePill()
+    {
+        if (!inventory->hasPill()) return;
+        inventory->usePill();
+        _mentalHealth.value += 40;
+        if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
+    }
+
+    void Player::scare(double force)
+    {
+        _scaredFactor += force;
+        if (_scaredFactor > 1.0) _scaredFactor = 1.0;
+        _mentalHealth.value -= 10 * _scaredFactor;
+        if (_mentalHealth.value < 0) _mentalHealth.value = 0;
     }
 
     /* ----- PRIVATE FUNCTIONs ----- */
@@ -156,17 +175,19 @@ namespace Raycaster
 
     void Player::_updateStamina(double deltaTime)
     {
-        if (_sprint && _isMoving && _stamina > 0) {
-            _stamina -= _staminaConsumption * deltaTime;
-            if (_stamina < 0) _stamina = 0;
+        double fatigueMult = 1.0 + (1.0 - (_mentalHealth.value / _mentalHealth.max)) * 1.5;
+
+        if (_sprint.isSprinting && _sprint.isMoving && _sprint.stamina > 0) {
+            _sprint.stamina -= (_sprint.consumption * fatigueMult) * deltaTime;
+            if (_sprint.stamina < 0) _sprint.stamina = 0;
         } else {
-            if (_stamina < _maxStamina) {
-                _stamina += _staminaRecovery * deltaTime;
-                if (_stamina > _maxStamina) _stamina = _maxStamina;
+            if (_mentalHealth.value > _mentalHealth.max / 2 && _sprint.stamina < _sprint.max) {
+                _sprint.stamina += _sprint.recovery * deltaTime;
+                if (_sprint.stamina > _sprint.max) _sprint.stamina = _sprint.max;
             }
         }
 
-        _isMoving = false;
+        _sprint.isMoving = false;
     }
 
     void Player::_updateFootsteps(sdl::Vector<double> oldPos)
@@ -174,11 +195,30 @@ namespace Raycaster
         double distanceMoved = _position.dist(oldPos);
         if (distanceMoved <= 0) return;
 
-        _footstepDistanceCounter += distanceMoved;
-        if (_footstepDistanceCounter >= _stepThreshold) {
-            _footstepDistanceCounter = 0;
-            sdl::AudioManager::get().playSound(_footstepSounds[_footstepSoundIndex], (_sprint && _stamina > 2) ? -1 : 60);
-            _footstepSoundIndex = (_footstepSoundIndex + 1) % _footstepSounds.size();
+        _footstepSound.distanceCounter += distanceMoved;
+        if (_footstepSound.distanceCounter >= _footstepSound.stepThreshold) {
+            _footstepSound.distanceCounter = 0;
+            sdl::AudioManager::get().playSound(_footstepSound.sounds[_footstepSound.index], (_sprint.isSprinting && _sprint.stamina > 2) ? -1 : 60);
+            _footstepSound.index = (_footstepSound.index + 1) % _footstepSound.sounds.size();
+        }
+    }
+
+    void Player::_updateMentalHealth(double deltaTime)
+    {
+        _mentalHealth.idleTimer = _sprint.isMoving ? 0.0 : _mentalHealth.idleTimer + deltaTime;
+        if (_mentalHealth.idleTimer >= _mentalHealth.idleThreshold) {
+            if (_mentalHealth.value < _mentalHealth.max) {
+                _mentalHealth.value += _mentalHealth.recovery * deltaTime;
+                if (_mentalHealth.value > _mentalHealth.max) _mentalHealth.value = _mentalHealth.max;
+            }
+        }
+    }
+
+    void Player::_updateScaredFactor(double deltaTime)
+    {
+        if (_scaredFactor > 0) {
+            _scaredFactor -= 0.2 * deltaTime;
+            if (_scaredFactor < 0) _scaredFactor = 0;
         }
     }
 }; // namespace Raycaster

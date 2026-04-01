@@ -15,6 +15,9 @@
 #include <vector>
 #include "Raycaster/Player/Player.hpp"
 #include "Raycaster/UI/Indicator/Indicator.hpp"
+#include "Raycaster/UI/Indicator/Keys/Keys.hpp"
+#include "Raycaster/UI/Indicator/MentalHealth/MentalHealth.hpp"
+#include "Raycaster/UI/Indicator/Pills/Pills.hpp"
 #include "Raycaster/UI/Indicator/Stamina/Stamina.hpp"
 
 /* ----- CLASS ----- */

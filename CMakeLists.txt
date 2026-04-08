@@ -28,9 +28,12 @@ if(BUILD_GAME)
     
     # WIN32 évite d'ouvrir une console CMD en arrière-plan sur Windows
     if(WIN32)
-        add_executable(TheConjuringTrap WIN32 ${GAME_SOURCES} src/main.cpp)
+		add_executable(TheConjuringTrap WIN32 ${GAME_SOURCES} src/main.cpp)
+	    # L'ordre est important : mingw32 en premier, puis SDL2main, puis SDL2
+    	target_link_libraries(TheConjuringTrap mingw32 SDL2::SDL2main SDL2::SDL2 SDL2_image SDL2_mixer)
     else()
         add_executable(TheConjuringTrap ${GAME_SOURCES} src/main.cpp)
+        target_link_libraries(TheConjuringTrap SDL2::SDL2 SDL2_image SDL2_mixer)
     endif()
 
     target_link_libraries(TheConjuringTrap SDL2::SDL2 SDL2_image SDL2_mixer)

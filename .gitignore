@@ -1,4 +1,8 @@
 /build/
+build_windows/*
+deps_windows/*
+build_linux/*
+dist/
 
 /bin/TheConjuringTrap
 TheConjuringTrap

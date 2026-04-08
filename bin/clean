@@ -6,12 +6,18 @@ cd "$PROJECT_ROOT"
 
 echo "--- Nettoyage du projet ---"
 
-if [ -d "build" ]; then
-    echo "Suppression du dossier build/..."
-    rm -rf build
-fi
+# Liste des dossiers à supprimer
+folders=("build" "build_linux" "build_windows" "dist")
 
-targets=("TheConjuringTrap" "UnitTests")
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        echo "Suppression du dossier $folder/..."
+        rm -rf "$folder"
+    fi
+done
+
+# Liste des cibles (liens ou fichiers) à la racine
+targets=("TheConjuringTrap" "UnitTests" "TheConjuringTrap.exe")
 
 for target in "${targets[@]}"; do
     if [ -L "$target" ] || [ -f "$target" ]; then
@@ -20,6 +26,7 @@ for target in "${targets[@]}"; do
     fi
 done
 
+# Suppression des logs
 if [ -f "scan_result.log" ]; then
     rm "scan_result.log"
 fi

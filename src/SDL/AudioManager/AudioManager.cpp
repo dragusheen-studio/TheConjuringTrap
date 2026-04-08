@@ -15,7 +15,7 @@ namespace sdl
 {
     /* ----- DEFAULTs ----- */
     AudioManager::AudioManager()
-        : _prefix("./assets/audio/"), _musicPrefix("music/"), _soundPrefix("sound/"), _volume(128)
+        : _prefix(utils::Path::getAssetsPath() + "audio/"), _musicPrefix("music/"), _soundPrefix("sound/"), _volume(128)
     {
         int flags = MIX_INIT_MP3 | MIX_INIT_OGG;
         if ((Mix_Init(flags) & flags) != flags)

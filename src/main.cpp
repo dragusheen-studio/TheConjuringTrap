@@ -10,10 +10,13 @@
 #include <iostream>
 #include "SDL/Error/Error.hpp"
 #include "Raycaster/Engine/Engine.hpp"
+#include "Utils/Path/Path.hpp"
 
+/* ----- MAIN ----- */
 int main(int argc, char *args[])
 {
     try {
+        utils::Path::init();
         Raycaster::Engine engine;
         engine.run();
     } catch (sdl::Error &e) {

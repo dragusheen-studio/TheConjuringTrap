@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include "SDL/Render/Render.hpp"
 #include "SDL/Texture/Texture.hpp"
+#include "Utils/Path/Path.hpp"
 
 /* ----- CLASS ----- */
 namespace sdl

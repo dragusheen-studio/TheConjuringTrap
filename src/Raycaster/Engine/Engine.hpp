@@ -29,6 +29,7 @@
 #include "Raycaster/UI/HUD/HUD.hpp"
 #include "Raycaster/UI/LootUI/LootUI.hpp"
 #include "Raycaster/UI/PromptUI/PromptUI.hpp"
+#include "Utils/Path/Path.hpp"
 
 /* ----- CLASS ----- */
 namespace Raycaster

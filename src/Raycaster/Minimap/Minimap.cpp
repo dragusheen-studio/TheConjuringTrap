@@ -69,12 +69,12 @@ namespace Raycaster
                 int drawX = centerX + (int)(rotX * _scale);
                 int drawY = centerY + (int)(rotY * _scale);
 
-                sdl::Circle entityBlip(3, sdl::Vector<double>(drawX, drawY), sdl::Color::GREEN);
+                sdl::Circle entityBlip(3, sdl::Vector<double>(drawX, drawY), sdl::Color::Green);
                 entityBlip.draw(render);
             }
         }
 
-        sdl::Circle player(4, sdl::Vector<double>(centerX, centerY), sdl::Color::YELLOW);
+        sdl::Circle player(4, sdl::Vector<double>(centerX, centerY), sdl::Color::Yellow);
         player.draw(render);
 
         SDL_RenderSetClipRect(renderer, NULL);

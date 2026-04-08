@@ -15,7 +15,7 @@ namespace Raycaster
     /* ----- DEFAULTs ----- */
     Engine::Engine(double fov, int numRays)
         : _quit(false),
-          _render(sdl::Vector<int>(960, 540), "Horror Raycaster - 3D", sdl::Color::BLACK, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED)),
+          _render(sdl::Vector<int>(960, 540), "Horror Raycaster - 3D", sdl::Color::Black, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED)),
           _map(64, (utils::Path::getAssetsPath() + "config/map/map.txt").c_str(), _render),
           _minimap(sdl::Vector<double>(16, 16), 128, 0.3),
           _player(sdl::Vector<double>(0, 0)),

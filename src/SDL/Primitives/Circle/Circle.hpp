@@ -22,7 +22,7 @@ namespace sdl
     class Circle : public Drawable, public Movable
     {
         public:
-            Circle(int radius, Vector<double> position = Vector<double>(0, 0), Color color = Color::BLACK);
+            Circle(int radius, Vector<double> position = Vector<double>(0, 0), Color color = Color::Black);
             ~Circle() = default;
 
             /* ----- OVERRIDE DRAWABLE ----- */

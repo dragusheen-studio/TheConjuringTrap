@@ -23,7 +23,7 @@ namespace sdl
     class Render
     {
         public:
-            Render(Vector<int> size, const char *title, sdl::Color clearColor = sdl::Color::BLACK, Vector<int> position = Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED));
+            Render(Vector<int> size, const char *title, sdl::Color clearColor = sdl::Color::Black, Vector<int> position = Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED));
             ~Render();
 
             SDL_Renderer *getRenderer();

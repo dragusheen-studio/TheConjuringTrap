@@ -13,7 +13,7 @@
 #include "Utils/Path/Path.hpp"
 
 /* ----- MAIN ----- */
-int main(int argc, char *args[])
+int main(int argc, char *argv[])
 {
     try {
         utils::Path::init();

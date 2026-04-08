@@ -67,7 +67,7 @@ namespace Raycaster
             int _cellSize;
             std::shared_ptr<sdl::Texture> _floorTexture;
             std::shared_ptr<sdl::Texture> _ceilingTexture;
-            sdl::Color _fogColor = sdl::Color::BLACK;
+            sdl::Color _fogColor = sdl::Color::Black;
             sdl::Vector<int> _renderDimension;
 
             Hit computeHit(bool c1, bool c2, double tan, bool reverse, const Map &map);

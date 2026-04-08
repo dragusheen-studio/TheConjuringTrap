@@ -21,7 +21,7 @@ class FactoryTestFixture : public ::testing::Test
 
         void SetUp() override
         {
-            render = new sdl::Render(sdl::Vector<int>(100, 100), "Test", sdl::Color::BLACK, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED));
+            render = new sdl::Render(sdl::Vector<int>(100, 100), "Test", sdl::Color::Black, sdl::Vector<int>(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED));
             player = new Raycaster::Player(sdl::Vector<double>(0, 0));
         }
         void TearDown() override

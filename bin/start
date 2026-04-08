@@ -4,26 +4,19 @@ PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
 run_project() {
-    if [ ! -d "build" ]; then
-        mkdir build
-    fi
-
-	if [ -f "TheConjuringTrap" ]; then
-		rm "TheConjuringTrap"
-	fi
-
-
+    mkdir -p build
     cd build
     cmake -DBUILD_GAME=ON -DBUILD_TESTS=OFF ..
     make -j$(nproc)
-
     cd ..
 
-    if [ -f "./TheConjuringTrap" ]; then
+    if [ -f "./build/TheConjuringTrap" ]; then
+        ln -sf "./build/TheConjuringTrap" "./TheConjuringTrap"
+        
         echo "--- Lancement du jeu ---"
         ./TheConjuringTrap
     else
-        echo "Erreur : L'exécutable n'a pas été généré."
+        echo "Erreur : L'exécutable n'a pas été trouvé dans build/."
         read -p "Pressez Entrée pour fermer..."
     fi
 }

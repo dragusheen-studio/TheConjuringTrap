@@ -4,21 +4,15 @@ PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
 run_tests() {
-    if [ ! -d "build" ]; then
-        mkdir build
-    fi
-
-    if [ -f "UnitTests" ]; then
-        rm "UnitTests"
-    fi
-
+    mkdir -p build
     cd build
     cmake -DBUILD_GAME=OFF -DBUILD_TESTS=ON ..
     make -j$(nproc)
-
     cd ..
 
-    if [ -f "./UnitTests" ]; then
+    if [ -f "./build/UnitTests" ]; then
+        ln -sf "./build/UnitTests" "./UnitTests"
+        
         echo "--- Lancement des Tests Unitaires ---"
         ./UnitTests
     else

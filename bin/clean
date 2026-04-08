@@ -1,16 +1,27 @@
 #!/bin/bash
 
+# Récupération du chemin racine du projet
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
+echo "--- Nettoyage du projet ---"
+
 if [ -d "build" ]; then
-	rm -rf build
+    echo "Suppression du dossier build/..."
+    rm -rf build
 fi
 
-if [ -f "TheConjuringTrap" ]; then
-	rm "TheConjuringTrap"
+targets=("TheConjuringTrap" "UnitTests")
+
+for target in "${targets[@]}"; do
+    if [ -L "$target" ] || [ -f "$target" ]; then
+        echo "Suppression de $target..."
+        rm "$target"
+    fi
+done
+
+if [ -f "scan_result.log" ]; then
+    rm "scan_result.log"
 fi
 
-if [ -f "UnitTests" ]; then
-	rm "UnitTests"
-fi
+echo "Projet propre."

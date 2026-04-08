@@ -10,3 +10,7 @@ fi
 if [ -f "TheConjuringTrap" ]; then
 	rm "TheConjuringTrap"
 fi
+
+if [ -f "UnitTests" ]; then
+	rm "UnitTests"
+fi

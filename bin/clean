@@ -1,16 +1,39 @@
 #!/bin/bash
 
+# ----- CONFIGURATION -----
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
-if [ -d "build" ]; then
-	rm -rf build
-fi
+# ----- DIRECTORIES CLEANUP -----
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Cleaning build directories"
+echo "==========================================="
+folders=("build" "build_linux" "build_windows" "dist")
 
-if [ -f "TheConjuringTrap" ]; then
-	rm "TheConjuringTrap"
-fi
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        rm -rf "$folder"
+    fi
+done
 
-if [ -f "UnitTests" ]; then
-	rm "UnitTests"
-fi
+# ----- TARGETS CLEANUP -----
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Cleaning targets"
+echo "==========================================="
+targets=("TheConjuringTrap" "UnitTests" "TheConjuringTrap.exe" "scan_result.log")
+
+for target in "${targets[@]}"; do
+    if [ -L "$target" ] || [ -f "$target" ]; then
+        rm "$target"
+    fi
+done
+
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Project clean"
+echo "==========================================="

@@ -1,31 +1,38 @@
 #!/bin/bash
 
+# ----- CONFIGURATION -----
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
+# ----- BUILD FUNCTION -----
 run_project() {
-    if [ ! -d "build" ]; then
-        mkdir build
-    fi
-
-	if [ -f "TheConjuringTrap" ]; then
-		rm "TheConjuringTrap"
-	fi
-
-
-    cd build
+	echo ""
+	echo ""
+	echo "==========================================="
+	echo " COMPILE: Creating the directories and building the game"
+	echo "==========================================="
+    mkdir -p build && cd build
     cmake -DBUILD_GAME=ON -DBUILD_TESTS=OFF ..
     make -j$(nproc)
-
     cd ..
 
-    if [ -f "./TheConjuringTrap" ]; then
-        echo "--- Lancement du jeu ---"
+    if [ -f "./build/TheConjuringTrap" ]; then
+        ln -sf "./build/TheConjuringTrap" "./TheConjuringTrap"
+		echo ""
+		echo ""
+		echo "==========================================="
+		echo " START: Launching the game"
+		echo "==========================================="
         ./TheConjuringTrap
     else
-        echo "Erreur : L'exécutable n'a pas été généré."
-        read -p "Pressez Entrée pour fermer..."
+		echo ""
+		echo ""
+		echo "==========================================="
+		echo " ERROR: Executable not found."
+		echo "==========================================="
+        read -p "Press Enter to close..."
     fi
 }
 
+# ----- EXECUTION -----
 gnome-terminal --tab --title="TheConjuringTrap Build" -- bash -c "$(declare -f run_project); run_project"

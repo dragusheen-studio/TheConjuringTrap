@@ -14,7 +14,7 @@ namespace sdl
 {
     /* ----- DEFAULTs ----- */
     TextureManager::TextureManager()
-        : _prefix("./assets/images/")
+        : _prefix(utils::Path::getAssetsPath() + "images/")
     {
     }
 

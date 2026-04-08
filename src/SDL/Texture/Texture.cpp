@@ -27,7 +27,7 @@ namespace sdl
         _size.x = surface->w;
         _size.y = surface->h;
 
-        _pixelCache.resize(_size.x * _size.y, sdl::Color::BLACK);
+        _pixelCache.resize(_size.x * _size.y, sdl::Color::Black);
 
         Uint32 *pixels = (Uint32 *)surface->pixels;
 
@@ -94,7 +94,7 @@ namespace sdl
     sdl::Color Texture::getPixel(int x, int y) const
     {
         if (x < 0 || x >= _size.x || y < 0 || y >= _size.y)
-            return sdl::Color::BLACK;
+            return sdl::Color::Black;
         return _pixelCache[y * _size.x + x];
     }
 }; // namespace sdl

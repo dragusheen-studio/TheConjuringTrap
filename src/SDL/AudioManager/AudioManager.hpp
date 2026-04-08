@@ -16,6 +16,7 @@
 #include <string>
 #include <unordered_map>
 #include "SDL/Error/Error.hpp"
+#include "Utils/Path/Path.hpp"
 
 /* ----- CLASS ----- */
 namespace sdl

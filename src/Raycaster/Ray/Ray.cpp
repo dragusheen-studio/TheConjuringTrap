@@ -165,7 +165,7 @@ namespace Raycaster
             double shadow = 1.0 - (_hit.distance / maxVisibility);
             if (shadow < 0.0) shadow = 0.0;
 
-            sdl::Color shadowColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
+            sdl::Color shadowColor = (sdl::Color)(sdl::Color::White)*shadow;
             if (_hit.vertical) shadowColor *= 0.6;
 
             _hit.texture->setColor(shadowColor);

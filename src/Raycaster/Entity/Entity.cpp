@@ -53,7 +53,7 @@ namespace Raycaster
 
         double shadow = 1.0 - (_distance / (_cellSize * _dov));
         if (shadow < 0.0) shadow = 0.0;
-        sdl::Color finalColor = (sdl::Color)(sdl::Color::WHITE)*shadow;
+        sdl::Color finalColor = (sdl::Color)(sdl::Color::White)*shadow;
         finalColor *= shadow;
 
         if (_selected) {

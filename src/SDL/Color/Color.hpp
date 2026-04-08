@@ -34,15 +34,15 @@ namespace sdl
 
             void apply(Render &render);
 
-            static const Color BLACK;
-            static const Color WHITE;
-            static const Color RED;
-            static const Color GREEN;
-            static const Color BLUE;
-            static const Color YELLOW;
-            static const Color MAGENTA;
-            static const Color CYAN;
-            static const Color TRANSPARENT;
+            static const Color Black;
+            static const Color White;
+            static const Color Red;
+            static const Color Green;
+            static const Color Blue;
+            static const Color Yellow;
+            static const Color Magenta;
+            static const Color Cyan;
+            static const Color Transparent;
     };
 }; // namespace sdl
 

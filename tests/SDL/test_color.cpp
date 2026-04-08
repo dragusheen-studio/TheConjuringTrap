@@ -37,21 +37,21 @@ TEST(ColorTest, ZeroValues)
 
 TEST(ColorTest, StaticBlack)
 {
-    EXPECT_EQ(sdl::Color::BLACK.r, 0);
-    EXPECT_EQ(sdl::Color::BLACK.g, 0);
-    EXPECT_EQ(sdl::Color::BLACK.b, 0);
+    EXPECT_EQ(sdl::Color::Black.r, 0);
+    EXPECT_EQ(sdl::Color::Black.g, 0);
+    EXPECT_EQ(sdl::Color::Black.b, 0);
 }
 
 TEST(ColorTest, StaticWhite)
 {
-    EXPECT_EQ(sdl::Color::WHITE.r, 255);
-    EXPECT_EQ(sdl::Color::WHITE.g, 255);
-    EXPECT_EQ(sdl::Color::WHITE.b, 255);
+    EXPECT_EQ(sdl::Color::White.r, 255);
+    EXPECT_EQ(sdl::Color::White.g, 255);
+    EXPECT_EQ(sdl::Color::White.b, 255);
 }
 
 TEST(ColorTest, StaticTransparent)
 {
-    EXPECT_EQ(sdl::Color::TRANSPARENT.a, 0);
+    EXPECT_EQ(sdl::Color::Transparent.a, 0);
 }
 
 TEST(ColorTest, MultiplyEqualsHalve)

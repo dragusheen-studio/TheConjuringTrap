@@ -30,7 +30,6 @@ namespace utils
 
         size_t lastSlash = path.find_last_of("\\/");
         if (lastSlash != std::string::npos) _assetsPath = path.substr(0, lastSlash + 1) + "assets/";
-        std::cout << "Resources path initialized to: " << _assetsPath << std::endl;
     }
 
     /* ----- GETTERs ----- */

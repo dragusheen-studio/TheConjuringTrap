@@ -1,15 +1,23 @@
 #!/bin/bash
-set -e
 
-# Récupération de la racine
+# ----- CONFIGURATION -----
+set -e
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
-# Dossiers de destination
 DIST_DIR="$PROJECT_ROOT/dist"
+WIN_DEPS="$PROJECT_ROOT/deps_windows"
+
+# ----- CLEANUP -----
+rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR/Linux" "$DIST_DIR/Windows"
 
-echo "--- Building LINUX Version ---"
+# ----- LINUX BUILD -----
+echo ""
+echo ""
+echo "==========================================="
+echo " BUILD LINUX: Building the linux version"
+echo "==========================================="
 mkdir -p build_linux && cd build_linux
 cmake -DBUILD_GAME=ON -DBUILD_TESTS=OFF ..
 make -j$(nproc)
@@ -17,38 +25,41 @@ cp TheConjuringTrap "$DIST_DIR/Linux/"
 cp -r assets "$DIST_DIR/Linux/"
 cd ..
 
-echo "--- Building WINDOWS Version ---"
+# ----- WINDOWS BUILD -----
+echo ""
+echo ""
+echo "==========================================="
+echo " BUILD WINDOWS: Building the windows version"
+echo "==========================================="
 mkdir -p build_windows && cd build_windows
 cmake -DCMAKE_TOOLCHAIN_FILE=../windows-toolchain.cmake -DBUILD_GAME=ON -DBUILD_TESTS=OFF ..
 make -j$(nproc)
 cp TheConjuringTrap.exe "$DIST_DIR/Windows/"
 cp -r assets "$DIST_DIR/Windows/"
+cd ..
 
+# ----- WINDOWS DLL COLLECTION -----
 echo "--- Collecting Windows DLLs ---"
-# On cherche les dossiers de deps dynamiquement pour éviter les erreurs de version
-SDL2_BIN=$(ls -d "$PROJECT_ROOT"/deps_windows/SDL2-*/x86_64-w64-mingw32/bin | head -n 1)
-SDL2_IMG_BIN=$(ls -d "$PROJECT_ROOT"/deps_windows/SDL2_image-*/x86_64-w64-mingw32/bin | head -n 1)
-SDL2_MIX_BIN=$(ls -d "$PROJECT_ROOT"/deps_windows/SDL2_mixer-*/x86_64-w64-mingw32/bin | head -n 1)
+SDL2_BIN=$(ls -d "$WIN_DEPS"/SDL2-*/x86_64-w64-mingw32/bin | head -n 1)
+SDL2_IMG_BIN=$(ls -d "$WIN_DEPS"/SDL2_image-*/x86_64-w64-mingw32/bin | head -n 1)
+SDL2_MIX_BIN=$(ls -d "$WIN_DEPS"/SDL2_mixer-*/x86_64-w64-mingw32/bin | head -n 1)
 
-# Copie des DLL des bibliothèques
 cp "$SDL2_BIN"/*.dll "$DIST_DIR/Windows/"
 cp "$SDL2_IMG_BIN"/*.dll "$DIST_DIR/Windows/"
 cp "$SDL2_MIX_BIN"/*.dll "$DIST_DIR/Windows/"
 
-# DLL système de MinGW (indispensables)
 MINGW_PATH="/usr/lib/gcc/x86_64-w64-mingw32"
-# On récupère la version de GCC installée (ex: 13)
 GCC_VER=$(ls $MINGW_PATH | head -n 1)
 
-echo "Using MinGW GCC Version: $GCC_VER"
-
-# Copie des DLL système
 cp "$MINGW_PATH/$GCC_VER/libgcc_s_seh-1.dll" "$DIST_DIR/Windows/" 2>/dev/null || true
 cp "$MINGW_PATH/$GCC_VER/libstdc++-6.dll" "$DIST_DIR/Windows/" 2>/dev/null || true
 cp "/usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll" "$DIST_DIR/Windows/" 2>/dev/null || true
-# Nettoyage final des dossiers de travail
+
+# ----- FINALIZATION -----
 rm -rf build_linux build_windows
 
+echo ""
+echo ""
 echo "==========================================="
 echo " BUILD FINISHED: Check the './dist' folder "
 echo "==========================================="

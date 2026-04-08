@@ -1,26 +1,38 @@
 #!/bin/bash
 
+# ----- CONFIGURATION -----
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
+# ----- TEST FUNCTION -----
 run_tests() {
-    mkdir -p build
-    cd build
+	echo ""
+	echo ""
+	echo "==========================================="
+	echo " COMPILE: Creating the directories and building the game"
+	echo "==========================================="
+    mkdir -p build && cd build
     cmake -DBUILD_GAME=OFF -DBUILD_TESTS=ON ..
     make -j$(nproc)
     cd ..
 
     if [ -f "./build/UnitTests" ]; then
         ln -sf "./build/UnitTests" "./UnitTests"
-        
-        echo "--- Lancement des Tests Unitaires ---"
+		echo ""
+		echo ""
+		echo "==========================================="
+		echo " START: Launching the tests"
+		echo "==========================================="
         ./UnitTests
-    else
-        echo "Erreur : L'exécutable UnitTests n'a pas été généré."
+	else
+		echo ""
+		echo ""
+		echo "==========================================="
+		echo " ERROR: Tests executable not found."
+		echo "==========================================="
     fi
-    
-    echo ""
-    read -p "Pressez Entrée pour fermer cette fenêtre..."
+	read -p "Press Enter to close..."
 }
 
+# ----- EXECUTION -----
 gnome-terminal --tab --title="TheConjuringTrap Tests" -- bash -c "$(declare -f run_tests); run_tests"

@@ -11,7 +11,6 @@
 #define UTILS_PATH_HPP_
 
 /* ----- INCLUDEs ----- */
-#include <iostream>
 #include <string>
 
 #ifdef _WIN32

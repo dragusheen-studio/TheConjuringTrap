@@ -1,34 +1,39 @@
 #!/bin/bash
 
-# Récupération du chemin racine du projet
+# ----- CONFIGURATION -----
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
-echo "--- Nettoyage du projet ---"
-
-# Liste des dossiers à supprimer
+# ----- DIRECTORIES CLEANUP -----
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Cleaning build directories"
+echo "==========================================="
 folders=("build" "build_linux" "build_windows" "dist")
 
 for folder in "${folders[@]}"; do
     if [ -d "$folder" ]; then
-        echo "Suppression du dossier $folder/..."
         rm -rf "$folder"
     fi
 done
 
-# Liste des cibles (liens ou fichiers) à la racine
-targets=("TheConjuringTrap" "UnitTests" "TheConjuringTrap.exe")
+# ----- TARGETS CLEANUP -----
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Cleaning targets"
+echo "==========================================="
+targets=("TheConjuringTrap" "UnitTests" "TheConjuringTrap.exe" "scan_result.log")
 
 for target in "${targets[@]}"; do
     if [ -L "$target" ] || [ -f "$target" ]; then
-        echo "Suppression de $target..."
         rm "$target"
     fi
 done
 
-# Suppression des logs
-if [ -f "scan_result.log" ]; then
-    rm "scan_result.log"
-fi
-
-echo "Projet propre."
+echo ""
+echo ""
+echo "==========================================="
+echo " CLEANING: Project clean"
+echo "==========================================="
